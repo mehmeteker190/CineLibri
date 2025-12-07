@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Nodemon ile CineLibri Server'ı Başlat",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+            
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/server",
+            "console": "integratedTerminal"
+        }
+    ]
+}

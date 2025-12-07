@@ -1,0 +1,30 @@
+{
+    "name": "cinelibri-backend",
+    "version": "1.0.0",
+    "description": "CineLibri Projesi Backend API'si",
+    "main": "server.js",
+    "scripts": {
+        "start": "nodemon server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "node",
+        "express",
+        "postgresql",
+        "cinelibri"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^1.3.4",
+        "bcrypt": "^5.1.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.0",
+        "multer": "^2.0.2",
+        "nodemailer": "^7.0.11",
+        "nodemon": "^2.0.22",
+        "pg": "^8.10.0"
+    }
+}

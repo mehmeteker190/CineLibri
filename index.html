@@ -1,0 +1,3576 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineLibri</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --cinematic-dark: #0A192F;
+            --primary-blue: #4A90E2;
+            --accent-gold: #FFC72C;
+            --text-light: #ccd6f6;
+            --text-dark: #1f2833;
+        }
+
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-light);
+            background-color: var(--cinematic-dark);
+        }
+
+        .full-screen-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: radial-gradient(circle at 1% 1%, rgba(74, 144, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 99% 99%, rgba(255, 199, 44, 0.1) 0%, transparent 50%);
+            padding: 20px;
+        }
+
+        #authContainer {
+            background: #112240;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            display: flex;
+            max-width: 950px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-panel {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #00bcd4 100%);
+            color: white;
+            padding: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 40%;
+        }
+
+        .brand-panel h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .form-panel {
+            padding: 45px;
+            width: 60%;
+            color: var(--text-light);
+        }
+
+        .form-control {
+            background-color: #0A192F;
+            border: 1px solid #30496B;
+            color: var(--text-light);
+        }
+
+        .form-control:focus {
+            background-color: #0A192F;
+            border-color: var(--primary-blue);
+            color: var(--text-light);
+            box-shadow: none;
+        }
+
+        #dashboard {
+            min-height: 100vh;
+        }
+
+        .navbar-brand {
+            color: var(--accent-gold) !important;
+            font-weight: 700;
+        }
+
+        .nav-link {
+            color: var(--text-light) !important;
+            cursor: pointer;
+        }
+
+        .nav-link.active {
+            color: var(--accent-gold) !important;
+            font-weight: 600;
+        }
+
+        .card {
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .clickable {
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .clickable:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            #authContainer {
+                flex-direction: column;
+            }
+
+            .brand-panel,
+            .form-panel {
+                width: 100%;
+            }
+        }
+
+        .hover-opacity-100:hover {
+            opacity: 1 !important;
+        }
+
+        .transition {
+            transition: opacity 0.3s ease;
+        }
+
+        .slider-container {
+            position: relative;
+            padding: 0;
+        }
+
+        .media-scroller {
+            display: flex;
+            overflow-x: auto;
+            gap: 0.5rem;
+            padding: 1rem 0;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .media-scroller::-webkit-scrollbar {
+            display: none;
+        }
+
+        .media-element {
+            flex: 0 0 auto;
+            width: calc((100% - 3rem) / 7) !important;
+            min-width: calc((100% - 3rem) / 7) !important;
+
+            transition: transform 0.3s ease;
+        }
+
+        .media-element:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(17, 34, 64, 0.8);
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+            color: var(--accent-gold);
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .scroll-btn:hover {
+            background: var(--accent-gold);
+            color: #112240;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .scroll-left {
+            left: -25px;
+        }
+
+        .scroll-right {
+            right: -25px;
+        }
+
+        .hidden-btn {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .no-arrow::after {
+            display: none !important;
+        }
+
+       
+        .nav-chevron {
+            color: var(--accent-gold);
+            font-weight: bold;
+            transition: transform 0.3s ease;
+            margin-left: 8px;
+        }
+
+   
+        .dropdown-menu {
+            margin-top: 10px !important;
+       
+            right: 0 !important;
+            left: auto !important;
+            padding-top: 5px;
+            border-radius: 8px;
+            border-top: 2px solid var(--accent-gold);
+        }
+
+    
+        .dropdown-menu.show {
+            display: block;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+       
+        .dropdown-toggle.show .nav-chevron {
+            transform: rotate(180deg);
+        }
+
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-control::placeholder {
+            color: #FFC72C !important;
+            opacity: 0.7 !important;
+            font-style: italic;
+        }
+
+        .form-control::-webkit-input-placeholder {
+            color: #FFC72C !important;
+            opacity: 0.7 !important;
+        }
+
+        .form-control::-moz-placeholder {
+            color: #FFC72C !important;
+            opacity: 0.7 !important;
+        }
+
+        .break-word {
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            word-break: break-word !important;
+            white-space: normal !important;
+        }
+
+        .text-line-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .text-expanded {
+            display: block !important;
+            -webkit-line-clamp: unset !important;
+            line-clamp: unset !important;
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
+        .force-break {
+            word-break: break-word !important;
+            overflow-wrap: anywhere !important;
+        }
+
+        .text-muted {
+            color: var(--accent-gold) !important;
+            opacity: 0.8;
+        }
+
+        .card-body small.text-muted {
+            color: var(--accent-gold) !important;
+            font-weight: 500;
+        }
+
+        .card-body small.text-muted:last-child,
+        #detailType {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: var(--accent-gold) !important;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 199, 44, 0.3);
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        #detailType.badge {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: var(--accent-gold) !important;
+        }
+
+        .nav-link.active {
+            color: #FFC72C !important;
+            font-weight: bold !important;
+            background-color: rgba(255, 199, 44, 0.1) !important;
+            border-color: #FFC72C !important;
+            border-bottom-width: 3px !important;
+            box-shadow: 0 0 15px rgba(255, 199, 44, 0.5);
+        }
+
+        input[type=number] {
+            appearance: none;
+            -moz-appearance: textfield;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="globalLoader" class="full-screen-container"
+        style="position: fixed; top:0; left:0; width:100%; height:100%; z-index: 9999; background: #0A192F;">
+        <div class="spinner-border text-warning" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Yükleniyor...</span>
+        </div>
+    </div>
+
+    <div id="authView" class="full-screen-container" style="display:none;">
+        <div id="authContainer">
+
+            <div class="brand-panel">
+                <h1>CineLibri</h1>
+                <p class="h5" id="panelText">Binlerce film ve kitabı keşfet.</p>
+                <button class="btn btn-outline-light mt-3" id="toggleButton" onclick="toggleForm()">Kayıt Ol</button>
+            </div>
+
+            <div class="form-panel">
+
+                <div id="loginFormContainer">
+                    <h2 class="text-center text-warning mb-4">Giriş Yap</h2>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">E-posta</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Şifre</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" name="password" id="loginPassword" required>
+
+                                <span class="input-group-text bg-dark border-secondary text-warning clickable"
+                                    onclick="togglePasswordVisibility('loginPassword', this)">
+                                    <i class="bi bi-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mb-3">
+                            <a href="#" onclick="openForgotModal()" class="small"
+                                style="text-decoration: none; color: #FFC72C;">Şifremi Unuttum</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning w-100 fw-bold">Giriş Yap</button>
+                        <div id="loginMessage" class="mt-3"></div>
+                    </form>
+                </div>
+
+                <div id="registerFormContainer" style="display:none;">
+                    <h2 class="text-center text-primary mb-4">Kayıt Ol</h2>
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label class="form-label">Kullanıcı Adı</label>
+                            <input type="text" class="form-control" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">E-posta</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Şifre</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" name="password" id="registerPassword"
+                                    required>
+
+                                <span class="input-group-text bg-dark border-secondary text-warning clickable"
+                                    onclick="togglePasswordVisibility('registerPassword', this)">
+                                    <i class="bi bi-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Hesap Oluştur</button>
+                        <div id="registerMessage" class="mt-3"></div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard" style="display:none;">
+        <nav class="navbar navbar-expand navbar-dark bg-dark border-bottom border-secondary">
+            <div class="container">
+
+                <a class="navbar-brand clickable" onclick="openTab('Activity')">
+                    CineLibri
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" onclick="openTab('Content')" id="Content-tab">Keşfet</a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <button class="btn btn-link text-warning p-0 text-decoration-none me-2"
+                            onclick="openUserSearchModal()" title="Kullanıcı Ara">
+                            <i class="bi bi-search fs-5"></i>
+                        </button>
+                        <div class="dropdown">
+                            <button class="btn btn-link text-white p-0 text-decoration-none position-relative me-3"
+                                id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                onclick="markNotificationsAsRead()">
+                                <i class="bi bi-bell-fill fs-5 text-warning"></i>
+                                <span id="notifBadge"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    style="display:none; font-size: 0.6rem;">
+                                    0
+                                </span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark border-secondary shadow"
+                                aria-labelledby="notifDropdown"
+                                style="width: 300px; max-height: 400px; overflow-y: auto;" id="notifList">
+                                <li><span class="dropdown-item-text text-muted small">Yükleniyor...</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="dropdown">
+                            <a href="#"
+                                class="d-flex align-items-center text-white text-decoration-none dropdown-toggle no-arrow"
+                                id="profileDropdown" role="button" data-bs-toggle="dropdown" data-bs-display="static"
+                                aria-expanded="false">
+
+                                <img id="navAvatar" src="https://placehold.co/40" alt="Profil"
+                                    class="rounded-circle border border-warning"
+                                    style="width: 40px; height: 40px; object-fit: cover;">
+
+                                <i class="bi bi-chevron-down nav-chevron"></i>
+                            </a>
+
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark border-secondary shadow"
+                                aria-labelledby="profileDropdown">
+                                <a class="dropdown-item clickable"
+                                    onclick="loadMyProfile().then(() => openTab('Profile'))">
+                                    <i class="bi bi-person-circle me-2 text-warning"></i> Profili Görüntüle
+                                </a>
+                                <li>
+                                    <a class="dropdown-item clickable" target="_blank"
+                                        href="https://mail.google.com/mail/?view=cm&fs=1&to=cinelibri.destek@gmail.com">
+                                        <i class="bi bi-envelope-fill me-2 text-info"></i> Bize Ulaşın
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider border-secondary">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item clickable text-danger fw-bold" onclick="logout()">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Oturumu Kapat
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="container mt-4">
+
+            <div id="Profile" class="tab" style="display:block;">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-white" id="profilePageTitle">Profilim</h3>
+                    <div id="profileActionBtnContainer"></div>
+                </div>
+
+                <div id="profileView" class="text-center mb-4">
+                    <img id="p_avatar" src="https://placehold.co/150"
+                        class="rounded-circle mb-3 border border-3 border-warning"
+                        style="width: 150px; height: 150px; object-fit: cover;">
+
+                    <h4 id="p_username" class="fw-bold text-white">...</h4>
+                    <p id="p_email" class="text-muted small" style="display:none;"></p>
+
+                    <div class="d-flex justify-content-center gap-4 my-3">
+                        <div class="text-center p-2 rounded bg-dark border border-secondary clickable"
+                            onclick="openNetworkModal('followers')" style="min-width: 100px;">
+                            <h4 class="fw-bold text-warning mb-0" id="p_followers">0</h4>
+                            <small style="color: #FFC72C;">Takipçiler</small>
+                        </div>
+                        <div class="text-center p-2 rounded bg-dark border border-secondary clickable"
+                            onclick="openNetworkModal('following')" style="min-width: 100px;">
+                            <h4 class="fw-bold text-info mb-0" id="p_following">0</h4>
+                            <small style="color: #FFC72C;">Takip Edlienler</small>
+                        </div>
+                    </div>
+
+                    <p id="profileBio" class="fst-italic mx-auto text-muted" style="max-width: 600px;">
+                        Biyografi yok.
+                    </p>
+                </div>
+
+                <div id="profileEditForm" style="display:none;"
+                    class="card bg-dark text-white border-secondary p-4 mb-4 shadow-lg">
+
+                    <h3 class="text-warning mb-4 fw-bold border-bottom border-secondary pb-2">
+                        <i class="bi bi-pencil-square me-2"></i>Bilgilerini Güncelle
+                    </h3>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-warning">Kullanıcı Adı</label>
+                        <input type="text" id="editUsername" class="form-control bg-dark text-white border-secondary">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-warning">Profil Fotoğrafı</label>
+
+                        <input type="file" id="editAvatarFile" class="d-none" accept="image/*"
+                            onchange="updateFileNameDisplay()">
+
+                        <div class="input-group">
+                            <button class="btn btn-secondary border-secondary" type="button"
+                                onclick="document.getElementById('editAvatarFile').click()">
+                                Dosya Seç
+                            </button>
+
+                            <input type="text" id="fileNameDisplay"
+                                class="form-control bg-dark text-white border-secondary fst-italic"
+                                placeholder="Dosya seçilmedi" readonly style="color: #FFC72C !important;">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-warning">Biyografi</label>
+                        <textarea id="editBio" class="form-control bg-dark text-white border-secondary"
+                            rows="3"></textarea>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button class="btn btn-outline-secondary me-2 px-4" onclick="toggleEditMode()">İptal</button>
+                        <button class="btn btn-warning fw-bold px-4" onclick="saveProfile()">Kaydet</button>
+                    </div>
+                </div>
+
+                <hr class="border-secondary my-5">
+
+                <h4 class="mb-3 text-warning"><i class="bi bi-collection-fill me-2"></i>Kütüphane</h4>
+
+                <ul class="nav nav-tabs border-secondary mb-3" id="libraryTabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active text-warning" id="btnWatched" data-bs-toggle="tab"
+                            data-bs-target="#tabWatched" type="button">
+                            İzlenenler
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-info" id="btnPlanned" data-bs-toggle="tab"
+                            data-bs-target="#tabPlanned" type="button">
+                            İzlenecekler
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-success" id="btnRead" data-bs-toggle="tab"
+                            data-bs-target="#tabRead" type="button">
+                            Okunanlar
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-white" id="btnReading" data-bs-toggle="tab"
+                            data-bs-target="#tabReading" type="button">
+                            Okunacaklar
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content mb-5" id="libraryTabContent">
+                    <div class="tab-pane fade show active" id="tabWatched">
+                        <div id="list-watched" class="row row-cols-2 row-cols-md-5 g-3"></div>
+                    </div>
+                    <div class="tab-pane fade" id="tabPlanned">
+                        <div id="list-planned" class="row row-cols-2 row-cols-md-5 g-3"></div>
+                    </div>
+                    <div class="tab-pane fade" id="tabRead">
+                        <div id="list-read" class="row row-cols-2 row-cols-md-5 g-3"></div>
+                    </div>
+                    <div class="tab-pane fade" id="tabReading">
+                        <div id="list-reading" class="row row-cols-2 row-cols-md-5 g-3"></div>
+                    </div>
+                </div>
+
+                <hr class="border-secondary my-5">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="text-warning m-0"><i class="bi bi-list-stars me-2"></i>Özel Listeler</h4>
+
+                    <div id="customListHeaderBtns" class="d-flex gap-2"></div>
+                </div>
+
+                <div id="customListsContainer" class="row row-cols-2 row-cols-md-4 g-3 mb-5">
+                </div>
+
+                <hr class="border-secondary my-5">
+
+                <h4 class="mb-3 text-warning"><i class="bi bi-activity me-2"></i>Son Aktiviteler</h4>
+                <div id="profileActivities" class="mb-5">
+                    <div class="text-muted small">Henüz aktivite yok.</div>
+                </div>
+
+            </div>
+
+            <div id="Content" class="tab" style="display:none;">
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-10 col-lg-8">
+                        <h3 class="text-warning mb-3">Keşfet</h3>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-dark text-warning border-secondary">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" id="searchInput" class="form-control bg-dark text-white border-secondary"
+                                placeholder="İçerik ara." onkeypress="handleEnter(event)">
+                            <button class="btn btn-warning fw-bold" onclick="searchUnified()">ARA</button>
+                        </div>
+
+                        <div class="row g-2 align-items-center mb-4">
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                            class="bi bi-grid"></i></span>
+                                    <select id="filterType" class="form-select bg-dark text-white border-secondary"
+                                        style="cursor: pointer;">
+                                        <option value="all">Tüm Türler</option>
+                                        <option value="movie"> Filmler</option>
+                                        <option value="book"> Kitaplar</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-dark border-secondary text-muted">Yıl</span>
+                                    <input type="number" id="minYear"
+                                        class="form-control bg-dark text-white border-secondary" placeholder="Başlangıç"
+                                        min="1900" max="2030">
+                                    <span class="input-group-text bg-dark border-secondary text-muted">-</span>
+                                    <input type="number" id="maxYear"
+                                        class="form-control bg-dark text-white border-secondary" placeholder="Bitiş"
+                                        min="1900" max="2030">
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                            class="bi bi-star-half"></i></span>
+                                    <select id="filterRating" class="form-select bg-dark text-white border-secondary"
+                                        style="cursor: pointer;">
+                                        <option value="">Min. Puan</option>
+                                        <option value="9">9+ (Efsane)</option>
+                                        <option value="8">8+ (Çok İyi)</option>
+                                        <option value="7">7+ (İyi)</option>
+                                        <option value="6">6+ (Ortalama)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <button class="btn btn-warning w-100 btn-sm fw-bold" onclick="searchUnified()">
+                                    <i class="bi bi-funnel-fill me-1"></i> FİLTRELE
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="searchResultsArea" style="display:none;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-white">Arama Sonuçları</h5>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="clearSearch()">Vitrini Göster</button>
+                    </div>
+                    <div id="contentList" class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4"></div>
+                </div>
+
+                <div id="popularShowcaseArea">
+                    <div id="loadingSpinner" class="text-center my-5" style="display:none;">
+                        <div class="spinner-border text-warning" role="status"></div>
+                    </div>
+
+                    <div id="movieSection" style="display:none;" class="mb-5">
+                        <h4 class="text-warning mb-3 px-4"><i class="bi bi-film"></i> Haftanın Popüler Filmleri</h4>
+                        <div class="slider-container">
+                            <button class="scroll-btn scroll-left" onclick="slideRail('popularMoviesRail', -1)"><i
+                                    class="bi bi-chevron-left"></i></button>
+                            <div id="popularMoviesRail" class="media-scroller"></div>
+                            <button class="scroll-btn scroll-right" onclick="slideRail('popularMoviesRail', 1)"><i
+                                    class="bi bi-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div id="bookSection" style="display:none;">
+                        <h4 class="text-info mb-3 px-4"><i class="bi bi-book"></i> Haftanın Popüler Kitapları</h4>
+                        <div class="slider-container">
+                            <button class="scroll-btn scroll-left" onclick="slideRail('popularBooksRail', -1)"><i
+                                    class="bi bi-chevron-left"></i></button>
+                            <div id="popularBooksRail" class="media-scroller"></div>
+                            <button class="scroll-btn scroll-right" onclick="slideRail('popularBooksRail', 1)"><i
+                                    class="bi bi-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="Activity" class="tab" style="display:none;">
+                <h3 class="text-white mb-4">Sosyal Akış</h3>
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        <div id="feedContainer" class="d-flex flex-column gap-4"></div>
+
+                        <div id="infiniteScrollLoader" class="text-center my-4" style="display:none;">
+                            <div class="spinner-border text-warning" role="status">
+                                <span class="visually-hidden">Yükleniyor...</span>
+                            </div>
+                        </div>
+
+                        <div id="endOfFeedMessage" class="text-center text-muted my-4 small" style="display:none;">
+                            Tüm gönderileri gördünüz.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="networkModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-warning" id="networkModalTitle">Listesi</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                        <div id="networkList" class="list-group list-group-flush">
+                            <p class="text-center text-muted">Yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="ratingModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-warning">İçeriği Değerlendir</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="modalDbId">
+                        <h6 id="modalContentTitle" class="text-center mb-3"></h6>
+                        <div class="mb-3">
+                            <label class="form-label">Puanın (1-10):</label>
+                            <select id="modalRating" class="form-select bg-secondary text-white border-0">
+                                <option value="10">⭐ 10</option>
+                                <option value="9">⭐ 9</option>
+                                <option value="8" selected>⭐ 8</option>
+                                <option value="7">⭐ 7</option>
+                                <option value="6">⭐ 6</option>
+                                <option value="5">⭐ 5</option>
+                                <option value="4">⭐ 4</option>
+                                <option value="3">⭐ 3</option>
+                                <option value="2">⭐ 2</option>
+                                <option value="1">⭐ 1</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Yorumun:</label>
+                            <textarea id="modalReview" class="form-control bg-secondary text-white border-0" rows="3"
+                                placeholder="Düşüncelerini paylaş..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-secondary">
+                        <button class="btn btn-outline-light" data-bs-dismiss="modal">İptal</button>
+                        <button class="btn btn-warning" onclick="submitRating()">Kaydet ve Yayınla</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-warning" id="fpModalTitle">Şifremi Unuttum</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            onclick="resetModalSteps()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="fpStep1">
+                            <p class="text-muted">Hesabınıza ait e-posta adresini girin.</p>
+                            <input type="email" id="fpEmail" class="form-control bg-secondary text-white border-0 mb-3"
+                                placeholder="ornek@email.com">
+                            <button class="btn btn-warning w-100" onclick="sendVerificationCode()">Kod
+                                Gönder</button>
+                        </div>
+                        <div id="fpStep2" style="display:none;">
+                            <p class="text-info">E-posta adresinize gelen 6 haneli kodu girin.</p>
+                            <p class="small text-muted">Kalan Süre: <span id="timer">05:00</span></p>
+                            <input type="text" id="fpCode"
+                                class="form-control bg-secondary text-white border-0 mb-3 text-center fw-bold fs-4"
+                                placeholder="XXXXXX" maxlength="6">
+                            <button class="btn btn-primary w-100" onclick="verifyCode()">Doğrula</button>
+                            <button class="btn btn-link text-muted w-100 mt-2 btn-sm"
+                                onclick="resetModalSteps()">E-postayı
+                                değiştir</button>
+                        </div>
+                        <div id="fpStep3" style="display:none;">
+                            <p class="text-success">Yeni şifrenizi belirleyin.</p>
+
+                            <div class="input-group mb-3">
+                                <input type="password" id="fpNewPass"
+                                    class="form-control bg-secondary text-white border-0" placeholder="Yeni Şifre">
+                                <span class="input-group-text bg-dark border-secondary text-warning clickable"
+                                    onclick="togglePasswordVisibility('fpNewPass', this)">
+                                    <i class="bi bi-eye"></i>
+                                </span>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <input type="password" id="fpNewPassConfirm"
+                                    class="form-control bg-secondary text-white border-0"
+                                    placeholder="Yeni Şifre (Tekrar)">
+                                <span class="input-group-text bg-dark border-secondary text-warning clickable"
+                                    onclick="togglePasswordVisibility('fpNewPassConfirm', this)">
+                                    <i class="bi bi-eye"></i>
+                                </span>
+                            </div>
+
+                            <button class="btn btn-success w-100" onclick="finalizePasswordReset()">Şifreyi
+                                Güncelle</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="contentDetailModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-warning" id="detailTitle">Detaylar</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <img id="detailPoster" src="" class="img-fluid rounded shadow w-100"
+                                    style="object-fit: cover; max-height: 400px;">
+                            </div>
+                            <div class="col-md-8">
+                                <h2 class="fw-bold mb-2" id="detailHeaderTitle">...</h2>
+                                <p class="text-muted mb-3">
+                                    <span id="detailYear" class="me-2"></span>
+                                    <span id="detailType" class="badge bg-secondary"></span>
+                                </p>
+
+                                <div class="d-flex gap-4 mb-4 p-3 bg-black bg-opacity-25 rounded">
+                                    <div class="text-center">
+                                        <div class="text-warning h4 mb-0"><i class="bi bi-star-fill"></i>
+                                            <span id="detailApiRating">-</span>
+                                        </div>
+                                        <small class="text-muted" style="font-size: 0.8rem;">Genel
+                                            Puan</small>
+                                    </div>
+                                    <div class="text-center border-start border-secondary ps-4">
+                                        <div class="text-info h4 mb-0"><i class="bi bi-people-fill"></i>
+                                            <span id="detailPlatformRating">-</span>
+                                        </div>
+                                        <small class="text-muted" style="font-size: 0.8rem;">CineLibri
+                                            Puanı</small>
+                                    </div>
+                                </div>
+
+                                <h5 class="text-white border-bottom border-secondary pb-1">Özet</h5>
+                                <p id="detailOverview" class="text-light" style="font-size: 0.95rem; line-height: 1.6;">
+                                    ...
+                                </p>
+
+                                <div class="mt-4" id="detailButtons">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-black bg-opacity-25 p-3 rounded mb-4 border border-secondary">
+                            <label class="form-label text-warning small fw-bold mb-2">Puanın ve
+                                Yorumun</label>
+
+                            <div class="d-flex align-items-center mb-3" onmouseleave="resetStarDisplay()">
+                                <div class="d-flex me-2" style="cursor: pointer;">
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="1"
+                                        onmousemove="hoverStar(1)" onclick="rateStar(1)"></i>
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="2"
+                                        onmousemove="hoverStar(2)" onclick="rateStar(2)"></i>
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="3"
+                                        onmousemove="hoverStar(3)" onclick="rateStar(3)"></i>
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="4"
+                                        onmousemove="hoverStar(4)" onclick="rateStar(4)"></i>
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="5"
+                                        onmousemove="hoverStar(5)" onclick="rateStar(5)"></i>
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="6"
+                                        onmousemove="hoverStar(6)" onclick="rateStar(6)"></i>
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="7"
+                                        onmousemove="hoverStar(7)" onclick="rateStar(7)"></i>
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="8"
+                                        onmousemove="hoverStar(8)" onclick="rateStar(8)"></i>
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="9"
+                                        onmousemove="hoverStar(9)" onclick="rateStar(9)"></i>
+                                    <i class="bi bi-star text-warning fs-5 star-icon" data-index="10"
+                                        onmousemove="hoverStar(10)" onclick="rateStar(10)"></i>
+                                </div>
+
+                                <span id="liveRatingDisplay" class="fw-bold text-white fs-5 ms-2">-</span>
+
+                                <input type="hidden" id="selectedRatingValue" value="0">
+                            </div>
+
+                            <div class="input-group">
+                                <input type="text" id="newReviewText"
+                                    class="form-control bg-dark text-white border-secondary"
+                                    placeholder="Bu içerik hakkında ne düşünüyorsun?">
+                                <button class="btn btn-warning fw-bold" onclick="postReview()">Gönder</button>
+                            </div>
+                        </div>
+                        <div id="detailReviews" class="mt-3 p-2" style="max-height: 250px; overflow-y: auto;">
+                            <p class="text-muted text-center">Yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="customListModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-info" id="customListTitle">Liste Detayı</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="customListItemsContainer" class="row row-cols-2 row-cols-md-4 g-3">
+                            <p class="text-muted text-center w-100">Yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="userSearchModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-warning"><i class="bi bi-people"></i> Kullanıcı Ara</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                    class="bi bi-search"></i></span>
+                            <input type="text" id="userSearchInput"
+                                class="form-control bg-dark text-white border-secondary"
+                                placeholder="Kullanıcı adı yazın..." onkeyup="searchUsersDirectly()">
+                        </div>
+
+                        <div id="userSearchResults" class="list-group list-group-flush">
+                            <p class="text-center text-muted small mt-2">Aramak için yazmaya başlayın...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 1100;">
+            <div id="liveToast" class="toast align-items-center text-white bg-dark border-secondary shadow-lg"
+                role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center">
+                        <i id="toastIcon" class="bi bi-info-circle-fill text-warning me-2 fs-4"></i>
+                        <span id="toastMessage" class="fs-6">İşlem başarılı.</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="selectListModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-warning">Listeye Ekle</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div id="selectListContainer" class="list-group list-group-flush"></div>
+
+                        <div class="p-2 border-top border-secondary">
+                            <button class="btn btn-outline-warning w-100 btn-sm" onclick="createCustomListPrompt()">
+                                <i class="bi bi-plus-lg"></i> Yeni Liste Oluştur
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="commentsModal" tabindex="-1" aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+
+                <div class="modal-content bg-dark text-white border-secondary">
+
+                    <div class="modal-header border-secondary">
+                        <div>
+                            <h5 class="modal-title text-warning" id="commModalTitle">Yorumlar</h5>
+                            <small class="text-muted" id="commModalSubTitle">...</small>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="bg-black bg-opacity-25 p-3 rounded mb-3 border border-secondary">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <label class="form-label text-warning small fw-bold mb-0">Senin
+                                    Görüşün</label>
+                                <span id="commMyRatingBadge" class="badge bg-warning text-dark"
+                                    style="display:none;">-</span>
+                            </div>
+
+                            <div class="input-group">
+                                <input type="text" id="commMyReviewInput"
+                                    class="form-control bg-dark text-white border-secondary form-control-sm"
+                                    placeholder="Bir şeyler yaz...">
+                                <button class="btn btn-warning btn-sm fw-bold"
+                                    onclick="postCommentFromModal()">Gönder</button>
+                            </div>
+                        </div>
+
+                        <div id="commListArea" class="d-flex flex-column gap-3">
+                            <p class="text-center text-muted my-4">Yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="commentsModal" tabindex="-1" aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+
+                <div class="modal-content bg-dark text-white border-secondary">
+
+                    <div class="modal-header border-secondary">
+                        <div>
+                            <h5 class="modal-title text-warning" id="commModalTitle">Yorumlar</h5>
+                            <small class="text-muted" id="commModalSubTitle">...</small>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="bg-black bg-opacity-25 p-3 rounded mb-3 border border-secondary">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <label class="form-label text-warning small fw-bold mb-0">Senin
+                                    Görüşün</label>
+                                <span id="commMyRatingBadge" class="badge bg-warning text-dark"
+                                    style="display:none;">-</span>
+                            </div>
+
+                            <div class="input-group">
+                                <input type="text" id="commMyReviewInput"
+                                    class="form-control bg-dark text-white border-secondary form-control-sm"
+                                    placeholder="Bir şeyler yaz...">
+                                <button class="btn btn-warning btn-sm fw-bold"
+                                    onclick="postCommentFromModal()">Gönder</button>
+                            </div>
+                        </div>
+
+                        <div id="commListArea" class="d-flex flex-column gap-3">
+                            <p class="text-center text-muted my-4">Yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="createListInputModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-warning">Yeni Liste Oluştur</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="newListInput" class="form-control bg-dark text-white border-secondary"
+                            placeholder="Listenin adı...">
+                    </div>
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" id="newListSaveBtn" class="btn btn-warning">Oluştur</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content bg-dark text-white border-warning shadow-lg">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title text-warning"><i class="bi bi-exclamation-triangle-fill me-2"></i>Emin
+                            misiniz?</h5>
+                    </div>
+                    <div class="modal-body text-center">
+                        <p id="confMsg" class="mb-0">Bu işlemi onaylıyor musunuz?</p>
+                    </div>
+                    <div class="modal-footer border-secondary justify-content-center">
+                        <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal"
+                            id="confBtnNo">Hayır</button>
+                        <button type="button" class="btn btn-danger px-4 fw-bold" id="confBtnYes">Evet, Sil</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            const API_URL = 'http://localhost:5000/api/auth';
+            const BASE_API = 'http://localhost:5000/api';
+
+            let currentProfileId = null;
+            let currentContentId = null;
+            let currentContentType = null;
+            let myUserId = null;
+            let feedPage = 1;
+            let feedLoading = false;
+            let feedHasMore = true
+            let confirmResolver = null;
+            let isListEditMode = false;
+            let selectedListIds = new Set();
+            let isListDetailEditMode = false;
+            let selectedDetailApiIds = new Set();
+
+            function showCustomConfirm(message) {
+                const modalEl = document.getElementById('confirmationModal');
+                const msgEl = document.getElementById('confMsg');
+
+                msgEl.innerText = message;
+
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                return new Promise((resolve) => {
+                    confirmResolver = resolve;
+                });
+            }
+
+
+            document.addEventListener('DOMContentLoaded', () => {
+
+                document.getElementById('confBtnYes').addEventListener('click', () => {
+                    if (confirmResolver) confirmResolver(true);
+                    bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+                });
+
+
+                document.getElementById('confBtnNo').addEventListener('click', () => {
+                    if (confirmResolver) confirmResolver(false);
+                });
+
+                document.getElementById('confirmationModal').addEventListener('hidden.bs.modal', () => {
+                    if (confirmResolver) {
+                        confirmResolver(false);
+                        confirmResolver = null;
+                    }
+                });
+            });
+
+            function getToken() { return localStorage.getItem('userToken'); }
+
+            function logout() { localStorage.removeItem('userToken'); location.reload(); }
+
+            function toggleView(isLoggedIn) {
+                const auth = document.getElementById('authView');
+                const dash = document.getElementById('dashboard');
+
+                if (isLoggedIn) {
+
+                    auth.style.display = 'none';
+
+                    dash.style.display = 'block';
+                } else {
+
+                    auth.style.display = 'flex';
+
+                    dash.style.display = 'none';
+                }
+            }
+
+            function openTab(tabName) {
+                document.querySelectorAll('.tab').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+
+                const content = document.getElementById(tabName);
+                if (content) content.style.display = 'block';
+
+                const tabBtn = document.getElementById(tabName + '-tab');
+                if (tabBtn) {
+                    tabBtn.classList.add('active');
+                }
+
+                if (tabName === 'Activity') {
+                    currentProfileId = null;
+                    loadActivityFeed(true);
+                }
+                if (tabName === 'Content' && document.getElementById('contentList').innerHTML === '') loadPopularContent();
+            }
+
+            function toggleForm() {
+                const l = document.getElementById('loginFormContainer'); const r = document.getElementById('registerFormContainer');
+                const btn = document.getElementById('toggleButton');
+                if (l.style.display === 'none') {
+                    l.style.display = 'block'; r.style.display = 'none'; btn.innerText = "Kayıt Ol";
+                } else {
+                    l.style.display = 'none'; r.style.display = 'block'; btn.innerText = "Giriş Yap";
+                }
+            }
+
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    const res = await fetch(`${API_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: e.target.email.value, password: e.target.password.value })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        localStorage.setItem('userToken', data.token);
+                        showToast("Giriş başarılı! Yönlendiriliyorsunuz...", "success");
+
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showToast(data.message || "Giriş başarısız.", "error");
+                    }
+                } catch (err) { showToast('Sunucu bağlantı hatası.', 'error'); }
+            });
+
+            document.getElementById('registerForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    const res = await fetch(`${API_URL}/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: e.target.username.value, email: e.target.email.value, password: e.target.password.value })
+                    });
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        showToast("Kayıt başarılı! Şimdi giriş yapabilirsiniz.", "success");
+                        e.target.reset();
+                        toggleForm();
+                    } else {
+                        showToast(data.message || "Kayıt başarısız.", "error");
+                    }
+                } catch (err) { showToast('Sunucu hatası.', 'error'); }
+            });
+
+            window.onload = async () => {
+                const loader = document.getElementById('globalLoader');
+
+                if (getToken()) {
+                    toggleView(true);
+
+                    await loadMyProfile();
+                    checkNotifications();
+                    setInterval(checkNotifications, 30000);
+                    openTab('Activity');
+
+                } else {
+                    toggleView(false);
+                }
+
+                if (loader) loader.style.display = 'none';
+            };
+
+            async function fetchWithAuth(url, options = {}) {
+                const token = getToken();
+                if (!options.headers) options.headers = {};
+
+                if (token) {
+                    options.headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                if (options.body && !options.headers['Content-Type']) {
+                    options.headers['Content-Type'] = 'application/json';
+                }
+
+                try {
+                    const res = await fetch(url, options);
+
+                    if (res.status === 401 || res.status === 403) {
+                        console.warn("Oturum süresi doldu, çıkış yapılıyor...");
+                        logout();
+                        return null;
+                    }
+
+                    if (!res.ok) {
+                        const text = await res.text();
+                        console.error("API Hatası:", text);
+                        return null;
+                    }
+
+                    return await res.json();
+                } catch (e) {
+                    console.error("Fetch Bağlantı Hatası:", e);
+                    return null;
+                }
+            }
+
+            async function loadMyProfile() {
+                currentProfileId = null;
+                const data = await fetchWithAuth(`${BASE_API}/users/profile`);
+                if (data) {
+                    myUserId = data.id;
+                    renderProfile(data, true);
+
+                    try { loadLibrary(); } catch (e) { }
+                    try { loadCustomLists(); } catch (e) { }
+                    try { loadProfileActivities(data.id); } catch (e) { }
+                    return true;
+                }
+                return false;
+            }
+
+            async function visitUserProfile(targetId) {
+
+                if (myUserId && targetId === myUserId) {
+                    await loadMyProfile();
+                    openTab('Profile');
+
+
+                    const searchModal = bootstrap.Modal.getInstance(document.getElementById('userSearchModal'));
+                    if (searchModal) searchModal.hide();
+                    return;
+                }
+
+                currentProfileId = targetId;
+
+
+                const netModal = bootstrap.Modal.getInstance(document.getElementById('networkModal'));
+                if (netModal) netModal.hide();
+
+                const searchModal = bootstrap.Modal.getInstance(document.getElementById('userSearchModal'));
+                if (searchModal) searchModal.hide();
+
+
+                const data = await fetchWithAuth(`${BASE_API}/users/${targetId}`);
+
+                if (data) {
+                    renderProfile(data, false);
+                    loadLibrary(targetId);
+                    loadCustomLists(targetId);
+                    loadProfileActivities(targetId);
+
+                    openTab('Profile');
+                }
+            }
+
+            function renderProfile(user, isSelf) {
+
+                let avatar = user.avatar || user.avatar_url || 'https://placehold.co/150';
+                if (avatar.includes('via.placeholder.com')) avatar = 'https://placehold.co/150';
+
+                document.getElementById('p_avatar').src = avatar;
+                document.getElementById('p_username').innerText = user.username;
+
+
+                const emailEl = document.getElementById('p_email');
+                if (isSelf && user.email) {
+                    emailEl.innerText = user.email;
+                    emailEl.style.display = 'block';
+                } else {
+                    emailEl.innerText = '';
+                    emailEl.style.display = 'none';
+                }
+
+                document.getElementById('profileBio').innerText = user.bio || 'Biyografi yok.';
+                document.getElementById('p_followers').innerText = user.followersCount || 0;
+                document.getElementById('p_following').innerText = user.followingCount || 0;
+
+                document.getElementById('profilePageTitle').innerText = isSelf ? "Profilim" : `${user.username} Profili`;
+
+
+
+                if (isSelf) {
+                    const navImg = document.getElementById('navAvatar');
+                    if (navImg) navImg.src = avatar;
+                }
+
+
+
+                const btnContainer = document.getElementById('profileActionBtnContainer');
+
+                if (isSelf) {
+
+                    btnContainer.innerHTML = `<button class="btn btn-warning btn-sm fw-bold" onclick="toggleEditMode()">Düzenle</button>`;
+                    document.getElementById('profileEditForm').style.display = 'none';
+                    document.getElementById('profileView').style.display = 'block';
+                } else {
+
+                    document.getElementById('profileEditForm').style.display = 'none';
+                    document.getElementById('profileView').style.display = 'block';
+
+                    const btnText = user.is_following ? "Takipten Çık" : "Takip Et";
+                    const btnClass = user.is_following ? "btn-danger" : "btn-primary";
+                    const action = user.is_following ? 'unfollow' : 'follow';
+
+                    btnContainer.innerHTML = `<button class="btn ${btnClass} btn-sm fw-bold" onclick="toggleFollow(${user.id}, '${action}', true)">${btnText}</button>`;
+                }
+            }
+
+            function toggleEditMode() {
+                const view = document.getElementById('profileView');
+                const form = document.getElementById('profileEditForm');
+
+                if (form.style.display === 'none') {
+                    view.style.display = 'none';
+                    form.style.display = 'block';
+
+
+                    document.getElementById('editUsername').value = document.getElementById('p_username').innerText;
+                    let currentBio = document.getElementById('profileBio').innerText;
+                    if (currentBio === 'Biyografi yok.') currentBio = '';
+                    document.getElementById('editBio').value = currentBio;
+
+
+                    const currentAvatarSrc = document.getElementById('p_avatar').src;
+
+
+                    document.getElementById('fileNameDisplay').value = currentAvatarSrc;
+
+
+                    document.getElementById('editAvatarFile').value = "";
+
+
+                } else {
+                    view.style.display = 'block';
+                    form.style.display = 'none';
+                }
+            }
+
+            async function saveProfile() {
+                const formData = new FormData();
+
+
+
+                const usernameVal = document.getElementById('editUsername').value;
+                const bioVal = document.getElementById('editBio').value;
+
+                formData.append('username', usernameVal);
+                formData.append('bio', bioVal);
+
+
+                const fileInput = document.getElementById('editAvatarFile');
+
+
+                if (fileInput.files.length > 0) {
+
+                    formData.append('avatar', fileInput.files[0]);
+                }
+
+                try {
+                    const token = getToken();
+
+
+                    const res = await fetch(`${BASE_API}/users/profile`, {
+                        method: 'PUT',
+                        headers: {
+
+
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        showToast('Profilin başarıyla güncellendi!', 'success');
+                        loadMyProfile();
+                        toggleEditMode();
+                    } else {
+                        showToast(data.message || 'Güncelleme başarısız', 'error');
+                    }
+                } catch (err) { showToast('Sunucu hatası.', 'error'); }
+            }
+
+            async function loadLibrary(userId = null) {
+                const url = userId ? `${BASE_API}/library/user/${userId}` : `${BASE_API}/library`;
+                const items = await fetchWithAuth(url);
+
+
+                ['list-watched', 'list-planned', 'list-read', 'list-reading'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = '';
+                });
+
+
+                let counts = {
+                    watched: 0,
+                    planned: 0,
+                    read: 0,
+                    reading: 0
+                };
+
+
+                if (!items || items.length === 0) {
+                    document.getElementById('list-watched').innerHTML = '<p class="text-muted ms-2">Kütüphane boş.</p>';
+
+                    updateLibraryTabCounts(counts);
+                    return;
+                }
+
+                const showActions = !userId;
+
+                items.forEach(item => {
+                    let targetListId = 'list-watched';
+
+
+                    if (item.content_type === 'movie') {
+                        if (item.status === 'watched') {
+                            targetListId = 'list-watched';
+                            counts.watched++;
+                        } else {
+                            targetListId = 'list-planned';
+                            counts.planned++;
+                        }
+                    } else {
+                        if (item.status === 'watched' || item.status === 'read') {
+                            targetListId = 'list-read';
+                            counts.read++;
+                        } else {
+                            targetListId = 'list-reading';
+                            counts.reading++;
+                        }
+                    }
+
+                    const container = document.getElementById(targetListId);
+                    if (!container) return;
+
+                    const listBtn = showActions ?
+                        `<button class="btn btn-sm btn-outline-info w-100 mt-2" 
+                onclick="openAddToListModal('${item.api_id}', '${item.title.replace(/'/g, "\\'")}', '${item.poster_url}', '${item.content_type}')">
+                <i class="bi bi-list-plus"></i> Listeye Ekle
+            </button>` : '';
+
+                    container.innerHTML += `
+        <div class="col">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="position-relative clickable" onclick="openContentDetail('${item.content_type}', '${item.api_id}')">
+                    <img src="${item.poster_url || 'https://placehold.co/300'}" class="card-img-top" style="height:150px;object-fit:cover;">
+                </div>
+                <div class="card-body p-2 text-white">
+                    <h6 class="text-truncate small mb-1" title="${item.title}">${item.title}</h6>
+                    ${item.rating ? `<small class="text-warning d-block">⭐ ${item.rating}/10</small>` : ''}
+                    ${listBtn} 
+                </div>
+            </div>
+        </div>`;
+                });
+
+                updateLibraryTabCounts(counts);
+                if (document.getElementById('btnWatched')) {
+                    new bootstrap.Tab(document.getElementById('btnWatched')).show();
+                }
+            }
+
+            function updateLibraryTabCounts(c) {
+                const btnWatched = document.getElementById('btnWatched');
+                const btnPlanned = document.getElementById('btnPlanned');
+                const btnRead = document.getElementById('btnRead');
+                const btnReading = document.getElementById('btnReading');
+
+                if (btnWatched) btnWatched.innerText = `İzlenenler (${c.watched})`;
+                if (btnPlanned) btnPlanned.innerText = `İzlenecekler (${c.planned})`;
+                if (btnRead) btnRead.innerText = `Okunanlar (${c.read})`;
+                if (btnReading) btnReading.innerText = `Okunacaklar (${c.reading})`;
+            }
+
+            async function openNetworkModal(type) {
+                document.getElementById('networkModalTitle').innerText = type === 'followers' ? 'Takipçiler' : 'Takip Edilenler';
+                const container = document.getElementById('networkList');
+                container.innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm"></div></div>';
+                new bootstrap.Modal(document.getElementById('networkModal')).show();
+
+                const query = currentProfileId ? `?userId=${currentProfileId}` : '';
+                const data = await fetchWithAuth(`${BASE_API}/users/network${query}`);
+
+                container.innerHTML = '';
+                if (!data) { container.innerHTML = '<p class="text-danger">Hata.</p>'; return; }
+
+                const list = type === 'followers' ? data.followers : data.following;
+
+                if (!list || list.length === 0) { container.innerHTML = '<p class="text-center text-muted mt-3">Kimse yok.</p>'; return; }
+
+                list.forEach(u => {
+                    container.innerHTML += `
+                <div class="d-flex align-items-center gap-3 p-2 border-bottom border-secondary clickable" onclick="visitUserProfile(${u.id})">
+                    <img src="${u.avatar_url || 'https://placehold.co/50'}" class="rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                    <span class="fw-bold text-white">${u.username}</span>
+                </div>`;
+                });
+            }
+
+            async function toggleFollow(targetId, action, isProfilePage = false, btnElement = null) {
+
+                const method = action === 'follow' ? 'POST' : 'DELETE';
+
+                try {
+                    const res = await fetchWithAuth(`${BASE_API}/users/follow`, {
+                        method,
+                        body: JSON.stringify({ targetId })
+                    });
+
+                    if (!res) return;
+
+                    if (isProfilePage) {
+                        visitUserProfile(targetId);
+                        return;
+                    }
+
+                    if (btnElement) {
+                        if (action === 'follow') {
+
+                            btnElement.innerText = "Takip Edildi"
+                            btnElement.classList.remove('btn-warning');
+                            btnElement.classList.remove('btn-secondary');
+                            btnElement.classList.add('btn-primary');
+                            btnElement.setAttribute('onclick', `toggleFollow(${targetId}, 'unfollow', false, this)`);
+
+                        } else {
+                            btnElement.innerText = "Takip Et";
+                            btnElement.classList.remove('btn-primary');
+                            btnElement.classList.remove('btn-secondary');
+                            btnElement.classList.add('btn-warning');
+                            btnElement.setAttribute('onclick', `toggleFollow(${targetId}, 'follow', false, this)`);
+                        }
+                    } else {
+                        showToast("İşlem başarılı", "success");
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    showToast("Bir hata oluştu.", "error");
+                }
+            }
+
+            function handleEnter(e) { if (e.key === 'Enter') searchUnified(); }
+
+            async function searchUnified() {
+
+                const q = document.getElementById('searchInput').value.trim();
+                const fType = document.getElementById('filterType').value;
+                const minYear = document.getElementById('minYear').value;
+                const maxYear = document.getElementById('maxYear').value;
+                const fRate = document.getElementById('filterRating').value;
+
+                if (!q && !minYear && !maxYear && !fRate && fType === 'all') {
+                    loadPopularContent(true);
+                    return;
+                }
+
+                const container = document.getElementById('contentList');
+                document.getElementById('popularShowcaseArea').style.display = 'none';
+                document.getElementById('searchResultsArea').style.display = 'block';
+
+                container.innerHTML = '';
+                document.getElementById('loadingSpinner').style.display = 'block';
+
+                try {
+                    let url = `${BASE_API}/content/search/unified?q=${encodeURIComponent(q)}`;
+
+                    if (fType !== 'all') url += `&type=${fType}`;
+                    if (minYear) url += `&minYear=${minYear}`;
+                    if (maxYear) url += `&maxYear=${maxYear}`;
+                    if (fRate) url += `&minRating=${fRate}`;
+
+                    const data = await fetchWithAuth(url);
+
+                    document.getElementById('loadingSpinner').style.display = 'none';
+
+                    if (!data) {
+                        container.innerHTML = '<div class="col-12 text-center text-danger">Bağlantı hatası.</div>';
+                        return;
+                    }
+
+                    let contents = [];
+                    if (data.movies) contents = contents.concat(data.movies.map(m => ({ ...m, type: 'movie' })));
+                    if (data.books) contents = contents.concat(data.books.map(b => ({ ...b, type: 'book' })));
+                    if (data.users && !minYear && !maxYear) contents = contents.concat(data.users);
+
+                    if (contents.length > 0) {
+                        contents.forEach(c => {
+                            if (c.type === 'user') { }
+                            else { renderSearchCard(container, c); }
+                        });
+                    } else {
+                        container.innerHTML = '<div class="col-12 text-center text-muted mt-5">Bu kriterlere uygun sonuç bulunamadı.</div>';
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                }
+            }
+
+            async function addToLibrary(apiId, title, poster, type) {
+                try {
+                    const res = await fetchWithAuth(`${BASE_API}/library/add`, {
+                        method: 'POST',
+                        body: JSON.stringify({ api_id: apiId, title, poster_url: poster, content_type: type })
+                    });
+
+                    if (res) showToast(`"${title}" kütüphanene eklendi!`, 'success');
+                    else showToast('Bu içerik zaten listenizde olabilir.', 'warning');
+
+                } catch (e) {
+                    showToast('Hata oluştu.', 'error');
+                }
+            }
+
+            async function loadPopularContent(applyFilters = false) {
+
+                document.getElementById('searchResultsArea').style.display = 'none';
+                document.getElementById('popularShowcaseArea').style.display = 'block';
+
+                const spinner = document.getElementById('loadingSpinner');
+                if (spinner) spinner.style.display = 'block';
+
+                const data = await fetchWithAuth(`${BASE_API}/content/popular`);
+
+                if (spinner) spinner.style.display = 'none';
+
+                if (!data) return;
+
+                let finalMovies = data.movies || [];
+                let finalBooks = data.books || [];
+
+                if (applyFilters) {
+
+                    const fType = document.getElementById('filterType').value;
+                    const fYear = document.getElementById('minYear').value;
+                    const fRate = document.getElementById('filterRating').value;
+
+                    if (fType === 'movie') finalBooks = [];
+                    if (fType === 'book') finalMovies = [];
+
+                    finalMovies = filterList(finalMovies, fYear, fRate);
+                    finalBooks = filterList(finalBooks, fYear, fRate);
+                }
+
+                displayCards({ movies: finalMovies, books: finalBooks });
+            }
+
+            function displayCards(data) {
+                const movieSection = document.getElementById('movieSection');
+                const bookSection = document.getElementById('bookSection');
+                const movieRail = document.getElementById('popularMoviesRail');
+                const bookRail = document.getElementById('popularBooksRail');
+
+
+                if (movieRail) movieRail.innerHTML = '';
+                if (bookRail) bookRail.innerHTML = '';
+                if (movieSection) movieSection.style.display = 'none';
+                if (bookSection) bookSection.style.display = 'none';
+
+
+                const createRailCard = (item, forcedType) => {
+                    const title = (item.title || 'Adsız').replace(/'/g, "\\'");
+                    const poster = item.poster_path || item.poster || 'https://placehold.co/200x300';
+                    const ratingVal = Number(item.vote_average || item.rating || 0).toFixed(1);
+                    const type = forcedType || item.media_type || (item.author ? 'book' : 'movie');
+
+                    return `
+        <div class="media-element">
+            <div class="card bg-dark text-white border-secondary h-100 shadow">
+                <div class="position-relative clickable" onclick="openContentDetail('${type}', '${item.id}')">
+                    <img src="${poster}" class="card-img-top" style="height: 240px; object-fit: cover;" onerror="this.src='https://placehold.co/200x300'">
+                    <span class="position-absolute top-0 end-0 bg-warning text-dark px-2 fw-bold small shadow-sm">${ratingVal}</span>
+                </div>
+                <div class="card-body p-2 d-flex flex-column">
+                    <h6 class="text-truncate small fw-bold mb-2" title="${item.title}">${item.title}</h6>
+                    <button class="btn btn-sm btn-outline-primary w-100 py-1 mt-auto fw-bold" style="font-size: 0.75rem;" 
+                            onclick="openAddToListModal('${item.id}', '${title}', '${poster}', '${type}')">
+                        <i class="bi bi-list-plus"></i> Listeye Ekle
+                    </button>
+                </div>
+            </div>
+        </div>`;
+                };
+
+
+                const setupRail = (railId) => {
+                    const el = document.getElementById(railId);
+                    if (el) {
+
+                        el.onscroll = () => updateScrollButtons(railId);
+
+
+                        setTimeout(() => updateScrollButtons(railId), 100);
+                    }
+                };
+
+
+                if (data.movies && data.movies.length > 0 && movieRail) {
+                    movieSection.style.display = 'block';
+                    data.movies.forEach(m => movieRail.innerHTML += createRailCard(m, 'movie'));
+                    setupRail('popularMoviesRail');
+                }
+
+
+                if (data.books && data.books.length > 0 && bookRail) {
+                    bookSection.style.display = 'block';
+                    data.books.forEach(b => bookRail.innerHTML += createRailCard(b, 'book'));
+                    setupRail('popularBooksRail');
+                }
+            }
+
+
+            async function loadActivityFeed(reset = true) {
+                const container = document.getElementById('feedContainer');
+                const loader = document.getElementById('infiniteScrollLoader');
+                const endMsg = document.getElementById('endOfFeedMessage');
+
+                if (feedLoading) return;
+
+                if (reset) {
+                    feedPage = 1;
+                    feedHasMore = true;
+                    if (container) container.innerHTML = '';
+                    if (endMsg) endMsg.style.display = 'none';
+                    if (loader) loader.style.display = 'block';
+                } else {
+                    if (!feedHasMore) return;
+                    if (loader) loader.style.display = 'block';
+                }
+
+                feedLoading = true;
+
+                try {
+                    let url = `${BASE_API}/users/feed?page=${feedPage}&limit=10`;
+                    if (currentProfileId) url += `&userId=${currentProfileId}`;
+
+                    const acts = await fetchWithAuth(url);
+
+                    if (loader) loader.style.display = 'none';
+                    feedLoading = false;
+
+                    if (!acts || !Array.isArray(acts)) {
+                        console.error("HATA: API'den liste gelmedi:", acts);
+                        return;
+                    }
+
+                    if (acts.length === 0) {
+                        feedHasMore = false;
+                        if (reset && container) {
+                            container.innerHTML = `
+                <div class="text-center text-muted p-5 border border-secondary rounded opacity-50">
+                    <i class="bi bi-inbox fs-1 mb-2"></i>
+                    <p>Henüz bir aktivite yok.</p>
+                </div>`;
+                        } else if (endMsg) {
+                            endMsg.style.display = 'block';
+                        }
+                        return;
+                    }
+
+
+                    acts.forEach(act => {
+                        if (container) {
+                            const cardHtml = createActivityCard(act);
+                            container.insertAdjacentHTML('beforeend', cardHtml);
+                        }
+                    });
+
+                    feedPage++;
+                    if (acts.length < 10) {
+                        feedHasMore = false;
+                        if (!reset && endMsg) endMsg.style.display = 'block';
+                    }
+
+                } catch (err) {
+                    console.error("Akış yüklenirken hata:", err);
+                    if (loader) loader.style.display = 'none';
+                    feedLoading = false;
+                }
+            }
+
+
+            function createActivityCard(act) {
+                if (!act) return '';
+
+
+                const titleRaw = act.content_title || act.title || 'İsimsiz İçerik';
+                const safeTitle = String(titleRaw).replace(/'/g, "\\'");
+                const posterRaw = act.content_poster || act.poster_url || 'https://placehold.co/100x150';
+                const username = act.username || 'Kullanıcı';
+                const userId = act.user_id || 0;
+                const avatar = act.avatar_url || 'https://placehold.co/50';
+                const dateDisplay = act.created_at ? timeAgo(act.created_at) : 'Az önce';
+
+                let actionHtml = '<span class="text-secondary">bir işlem yaptı</span>';
+                const rating = act.rating || 0;
+                const review = act.review_text || act.comment || '';
+
+                if (rating > 0 || act.activity_type === 'rate_content') {
+                    actionHtml = `<span class="text-warning">puan verdi: <strong style="font-size: 0.9em;">${rating}/10</strong> ⭐</span>`;
+                } else if (review || act.activity_type === 'review_content') {
+                    actionHtml = `<span class="text-info">yorum yaptı 💬</span>`;
+                }
+
+
+                let reviewHtml = '';
+                if (review) {
+                    const isLong = review.length > 150;
+                    const textPClass = isLong ? 'text-line-clamp' : '';
+
+
+                    const readMoreBtn = isLong ?
+                        `<span class="text-info clickable fw-bold small mt-1" onclick="expandReviewText(this)">devamını oku</span>` : '';
+
+                    reviewHtml = `
+        <div class="mt-2 p-2 bg-black bg-opacity-25 rounded border-start border-3 border-info">
+            <p class="text-light small mb-0 fst-italic force-break ${textPClass}">"${review}"</p>
+            ${readMoreBtn}
+        </div>`;
+                }
+
+
+                const contentId = act.content_api_id || 0;
+                const contentType = act.content_type || 'movie';
+                const likeCount = act.like_count || 0;
+                const commentCount = act.commentCount || 0;
+                const isLikedClass = act.is_liked ? 'bi-heart-fill text-warning' : 'bi-heart text-white';
+
+
+                return `
+    <div class="card bg-dark text-white border-secondary shadow mb-3">
+        <div class="card-header border-secondary bg-transparent d-flex align-items-center gap-2">
+            <img src="${avatar}" class="rounded-circle clickable" style="width:40px; height:40px; object-fit:cover;" onclick="visitUserProfile(${userId})">
+            <div class="lh-1 flex-grow-1">
+                <div class="fw-bold text-warning clickable" onclick="visitUserProfile(${userId})">${username}</div>
+                <div style="font-size: 0.75rem; opacity: 0.9;">${actionHtml}</div>
+            </div>
+            <small class="text-muted text-nowrap" style="font-size:0.7rem">${dateDisplay}</small>
+        </div>
+        
+        <div class="card-body p-3 d-flex gap-3">
+            <div class="clickable flex-shrink-0" onclick="openContentDetail('${contentType}', '${contentId}')">
+                <img src="${posterRaw}" class="rounded shadow" style="width:70px; height:105px; object-fit:cover;" onerror="this.src='https://placehold.co/100x150'">
+            </div>
+            <div class="w-100 min-width-0">
+                <h5 class="fw-bold mb-1 clickable text-white text-truncate" onclick="openContentDetail('${contentType}', '${contentId}')">${safeTitle}</h5>
+                ${reviewHtml}
+            </div>
+        </div>
+
+      
+
+        <div class="card-footer bg-transparent border-secondary d-flex justify-content-between align-items-center">
+            <div></div> 
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-sm btn-outline-secondary border-0" onclick="openCommentsModal(${act.id}, '${safeTitle}')">
+                    <i class="bi bi-chat fs-5 text-white"></i> <span class="ms-1 fw-bold text-white">${commentCount}</span>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary border-0" onclick="toggleActivityLike(${act.id}, this)">
+                    <i class="bi ${isLikedClass} fs-5 heart-icon"></i> <span class="ms-1 fw-bold like-count text-white">${likeCount}</span>
+                </button>
+            </div>
+        </div>
+    </div>`;
+            }
+
+            window.addEventListener('scroll', () => {
+
+                if (document.getElementById('Activity').style.display === 'none') return;
+
+
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                    loadActivityFeed(false);
+                }
+            });
+
+            function loadMoreActivities() {
+                feedPage++;
+                loadActivityFeed(false);
+            }
+
+
+            function openForgotModal() { new bootstrap.Modal(document.getElementById('forgotPasswordModal')).show(); }
+
+            async function sendVerificationCode() {
+                const email = document.getElementById('fpEmail').value;
+                if (!email) return showToast("E-posta giriniz.", "warning");
+                try {
+                    await fetch(`${API_URL}/forgot-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+                    document.getElementById('fpStep1').style.display = 'none';
+                    document.getElementById('fpStep2').style.display = 'block';
+                    startTimer(300);
+                    showToast("Doğrulama kodu gönderildi.", "success");
+                } catch (e) { showToast('Hata oluştu.', 'error'); }
+            }
+
+            async function verifyCode() {
+                const code = document.getElementById('fpCode').value;
+                const res = await fetch(`${API_URL}/verify-code`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: document.getElementById('fpEmail').value, code }) });
+                if (res.ok) {
+                    document.getElementById('fpStep2').style.display = 'none';
+                    document.getElementById('fpStep3').style.display = 'block';
+                    showToast("Kod doğrulandı.", "success");
+                } else {
+                    showToast('Hatalı kod.', 'error');
+                }
+            }
+
+            async function finalizePasswordReset() {
+                const pass = document.getElementById('fpNewPass').value;
+                const res = await fetch(`${API_URL}/reset-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: document.getElementById('fpEmail').value, code: document.getElementById('fpCode').value, newPassword: pass }) });
+                if (res.ok) {
+                    showToast('Şifreniz başarıyla değiştirildi!', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast('Hata oluştu.', 'error');
+                }
+            }
+
+            function startTimer(d) { let t = d, m, s; const disp = document.getElementById('timer'); setInterval(() => { m = parseInt(t / 60, 10); s = parseInt(t % 60, 10); disp.textContent = m + ":" + (s < 10 ? "0" + s : s); if (--t < 0) disp.textContent = "Süre Doldu"; }, 1000); }
+
+            async function openContentDetail(type, id) {
+                currentContentId = id;
+                currentContentType = type;
+
+                const modalEl = document.getElementById('contentDetailModal');
+
+
+                const isModalOpen = modalEl.classList.contains('show');
+                let modalInstance = bootstrap.Modal.getInstance(modalEl);
+
+                if (!modalInstance) {
+                    modalInstance = new bootstrap.Modal(modalEl);
+                }
+
+
+                if (!isModalOpen) {
+                    modalInstance.show();
+
+
+                    document.getElementById('detailPoster').src = "";
+                    document.getElementById('detailHeaderTitle').innerText = 'Yükleniyor...';
+                    document.getElementById('detailReviews').innerHTML = '<div class="text-center text-muted py-3"><div class="spinner-border text-warning"></div></div>';
+
+
+                    updateStarVisuals(0);
+                    if (document.getElementById('newReviewText')) document.getElementById('newReviewText').value = '';
+                }
+
+                try {
+
+                    const data = await fetchWithAuth(`${BASE_API}/content/${type}/${id}`);
+
+                    if (!data) {
+                        showToast('İçerik detayları alınamadı (Sunucu Hatası).', 'warning');
+
+
+                        setTimeout(() => {
+                            modalInstance.hide();
+                            const backdrops = document.querySelectorAll('.modal-backdrop');
+                            backdrops.forEach(bd => bd.remove());
+                            document.body.classList.remove('modal-open');
+                            document.body.style = '';
+                        }, 500);
+
+                        return;
+                    }
+
+
+                    document.getElementById('detailTitle').innerText = type === 'movie' ? 'Film Detayı' : 'Kitap Detayı';
+                    document.getElementById('detailHeaderTitle').innerText = data.title;
+
+
+                    const yearText = data.release_date ? data.release_date.split('-')[0] : (data.year || 'Tarih Yok');
+                    const typeText = type === 'movie' ? '🎬 Film' : '📚 Kitap';
+
+
+                    const yearEl = document.getElementById('detailYear');
+                    yearEl.innerText = yearText;
+
+                    yearEl.className = "badge border border-warning text-warning px-2 py-1 me-2";
+
+                    yearEl.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                    yearEl.style.fontSize = "0.85rem";
+                    yearEl.style.fontWeight = "normal";
+
+
+                    const typeEl = document.getElementById('detailType');
+                    typeEl.innerText = typeText;
+                    typeEl.className = "badge border border-warning text-warning px-2 py-1";
+                    typeEl.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                    typeEl.style.fontSize = "0.85rem";
+                    typeEl.style.fontWeight = "normal";
+
+
+                    const poster = data.poster_path || 'https://placehold.co/300x450';
+                    if (document.getElementById('detailPoster').src !== poster) {
+                        document.getElementById('detailPoster').src = poster;
+                    }
+
+                    document.getElementById('detailOverview').innerText = (data.overview || 'Açıklama bulunmuyor.').replace(/<[^>]*>?/gm, '');
+
+
+                    document.getElementById('detailApiRating').innerText = data.vote_average ? Number(data.vote_average).toFixed(1) : '-';
+
+                    const userRating = data.platformRating ? Number(data.platformRating).toFixed(1) : '-';
+                    const totalVotes = data.totalVotes || 0;
+                    const voteText = totalVotes > 0 ? `(${totalVotes} Oy)` : '(Henüz oy yok)';
+
+                    document.getElementById('detailPlatformRating').innerHTML = `
+            ${userRating} 
+            <span class="ms-1 text-secondary fw-normal" style="font-size: 0.6em; vertical-align: middle;">
+                ${voteText}
+            </span>
+        `;
+
+
+                    const safeTitle = (data.title || 'İçerik').replace(/'/g, "\\'");
+                    const libId = data.libraryId || null;
+                    const status = data.myStatus;
+
+                    const isMovie = type === 'movie';
+                    const labelWatched = isMovie ? 'İzledim' : 'Okudum';
+                    const labelPlanned = isMovie ? 'İzleyeceğim' : 'Okuyacağım';
+
+                    const btnWatchedClass = (status === 'watched' || status === 'read') ? 'btn-success' : 'btn-outline-success';
+                    const btnPlannedClass = (status === 'planned' || status === 'reading') ? 'btn-primary' : 'btn-outline-primary';
+
+                    document.getElementById('detailButtons').innerHTML = `
+            <div class="d-flex flex-column gap-2" id="statusBtnGroup" data-lib-id="${libId}">
+                <div class="btn-group w-100" role="group">
+                    <button type="button" class="btn ${btnWatchedClass} fw-bold" onclick="updateContentStatus('watched')">
+                        <i class="bi bi-check-circle-fill"></i> ${labelWatched}
+                    </button>
+                    <button type="button" class="btn ${btnPlannedClass} fw-bold" onclick="updateContentStatus('planned')">
+                        <i class="bi bi-bookmark-plus-fill"></i> ${labelPlanned}
+                    </button>
+                </div>
+                <button class="btn btn-outline-info w-100 btn-sm" onclick="openAddToListModal('${data.id}', '${safeTitle}', '${poster}', '${type}')">
+                    <i class="bi bi-list-ul"></i> Özel Listeye Ekle
+                </button>
+            </div>
+        `;
+
+
+                    const myRating = data.myRating ? parseInt(data.myRating) : 0;
+                    const myReview = data.myReview || '';
+
+                    currentRating = myRating;
+
+                    if (document.getElementById('selectedRatingValue')) {
+                        document.getElementById('selectedRatingValue').value = myRating;
+                        updateStarVisuals(myRating);
+
+                        const reviewInput = document.getElementById('newReviewText');
+                        if (reviewInput) {
+                            const inputGroup = reviewInput.parentElement;
+
+                            const btnLabel = (myReview || myRating > 0) ? 'Güncelle' : 'Gönder';
+                            let buttonsHtml = `<button class="btn btn-warning fw-bold" onclick="postReview()">${btnLabel}</button>`;
+
+                            if (myReview || myRating > 0) {
+                                buttonsHtml += `<button class="btn btn-danger ms-1" onclick="deleteReview()" title="Yorumu ve Puanı Sil"><i class="bi bi-trash"></i></button>`;
+                            }
+
+                            inputGroup.innerHTML = `
+                    <input type="text" id="newReviewText" 
+                           class="form-control bg-dark text-white border-secondary" 
+                           placeholder="Bu içerik hakkında ne düşünüyorsun?" 
+                           value="${myReview}">
+                    ${buttonsHtml}
+                `;
+                        }
+                    }
+
+
+                    const reviewsDiv = document.getElementById('detailReviews');
+                    reviewsDiv.innerHTML = '';
+
+                    const reviewCount = data.reviews ? data.reviews.length : 0;
+                    const badge = document.getElementById('reviewCountBadge');
+                    if (badge) badge.innerText = reviewCount;
+
+
+                    if (data.reviews && data.reviews.length > 0) {
+                        data.reviews.forEach(r => {
+                            const avatar = r.avatar_url || 'https://placehold.co/50';
+
+
+                            let ratingBadge = '';
+                            if (r.rating && r.rating > 0) {
+                                ratingBadge = `<span class="badge bg-warning text-dark ms-2" style="font-size: 0.7rem;">⭐ ${r.rating}/10</span>`;
+                            }
+
+
+                            let reviewHtml = '';
+                            if (r.review && r.review.trim() !== "") {
+                                const fullText = r.review;
+                                const isLong = fullText.length > 150;
+
+
+                                const readMoreBtn = `<span class="text-info clickable fw-bold small d-block mt-1" onclick="expandReviewText(this)">...devamını oku</span>`;
+
+                                reviewHtml = `
+                                <div class="mt-1">
+                                    <p class="text-light mb-0 small fst-italic force-break ${isLong ? 'text-line-clamp' : ''}" 
+                                       style="line-height: 1.5;">
+                                        "${fullText}"
+                                    </p>
+                                    ${isLong ? readMoreBtn : ''}
+                                </div>
+                            `;
+                            }
+
+                            reviewsDiv.innerHTML += `
+                            <div class="d-flex gap-3 mb-3 border-bottom border-secondary pb-2">
+                                <img src="${avatar}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                <div class="w-100">
+                                    <div class="d-flex align-items-center flex-wrap">
+                                        <strong class="text-white me-1">${r.username}</strong>
+                                        ${ratingBadge}
+                                        <small class="text-muted ms-auto" style="font-size: 0.7rem;">${timeAgo(r.date)}</small>
+                                    </div>
+                                    ${reviewHtml}
+                                </div>
+                            </div>
+                        `;
+                        });
+                    } else {
+                        reviewsDiv.innerHTML = '<p class="text-muted text-center py-3">Henüz yorum yapılmamış.</p>';
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    if (!isModalOpen) modalInstance.hide();
+                    showToast('Bağlantı hatası.', 'warning');
+                }
+            }
+
+            async function postReview() {
+                const review = document.getElementById('newReviewText').value.trim();
+                let rating = parseInt(document.getElementById('selectedRatingValue').value);
+
+                if (!review && rating === 0) {
+                    return showToast("Lütfen en azından bir puan verin veya yorum yazın.", "warning");
+                }
+
+                const ratingToSend = rating === 0 ? null : rating;
+
+                const currentTitle = document.getElementById('detailHeaderTitle').innerText;
+                const currentPoster = document.getElementById('detailPoster').src;
+
+                try {
+                    const res = await fetchWithAuth(`${BASE_API}/library/review`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            api_id: currentContentId,
+                            content_type: currentContentType,
+                            review: review,
+                            rating: ratingToSend,
+                            title: currentTitle,
+                            poster_url: currentPoster
+                        })
+                    });
+
+                    if (res) {
+                        showToast('İşlem başarılı!', 'success');
+                        openContentDetail(currentContentType, currentContentId);
+
+                        if (document.getElementById('Activity').style.display !== 'none') {
+                            loadActivityFeed();
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast('Hata oluştu.', 'error');
+                }
+            }
+
+            function highlightFeedStars(actId, rating) {
+                for (let i = 1; i <= 10; i++) {
+                    const star = document.getElementById(`star-${actId}-${i}`);
+                    if (i <= rating) {
+                        star.classList.remove('bi-star', 'text-white');
+                        star.classList.add('bi-star-fill', 'text-warning');
+                    } else {
+                        star.classList.remove('bi-star-fill', 'text-warning');
+                        star.classList.add('bi-star', 'text-white');
+                    }
+                }
+            }
+
+            function resetFeedStars(actId) {
+                const msg = document.getElementById(`rate-msg-${actId}`);
+
+                const savedRating = msg.dataset.userRating ? parseInt(msg.dataset.userRating) : 0;
+
+                for (let i = 1; i <= 10; i++) {
+                    const star = document.getElementById(`star-${actId}-${i}`);
+
+
+                    if (i <= savedRating) {
+                        star.className = 'bi bi-star-fill text-warning feed-star cursor-pointer';
+                    } else {
+
+                        star.className = 'bi bi-star text-white feed-star cursor-pointer';
+                    }
+                }
+
+
+                if (savedRating === 0) {
+                    msg.style.opacity = '0';
+                }
+            }
+
+            async function submitFeedRating(contentType, apiId, rating, actId) {
+                if (!apiId || apiId === 'undefined') return showToast("Bu içerik puanlanamaz.", "warning");
+
+                try {
+                    const res = await fetchWithAuth(`${BASE_API}/library/review`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            api_id: apiId,
+                            content_type: contentType,
+                            rating: rating,
+                            review: ""
+                        })
+                    });
+
+                    if (res && res.message) {
+                        const msg = document.getElementById(`rate-msg-${actId}`);
+
+
+                        msg.style.opacity = '1';
+                        msg.innerText = `${rating}/10`;
+                        msg.classList.remove('text-muted', 'text-white');
+                        msg.classList.add('text-warning', 'fw-bold');
+
+
+                        msg.dataset.userRating = rating;
+
+
+                        highlightFeedStars(actId, rating);
+
+                    } else {
+                        showToast("Önce bu içeriği kütüphanene eklemelisin!", "warning");
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            let currentRating = 0;
+
+            function hoverStar(index) {
+                updateStarVisuals(index);
+            }
+
+            function rateStar(index) {
+                currentRating = index;
+
+
+                const input = document.getElementById('selectedRatingValue');
+                if (input) input.value = index;
+
+
+                updateStarVisuals(index);
+
+
+                const display = document.getElementById('liveRatingDisplay');
+                if (display) {
+                    display.style.transform = "scale(1.2)";
+                    setTimeout(() => display.style.transform = "scale(1)", 150);
+                }
+            }
+
+            function resetStarDisplay() {
+                updateStarVisuals(currentRating);
+            }
+
+            function updateStarVisuals(score) {
+
+                const display = document.getElementById('liveRatingDisplay');
+                if (display) {
+                    display.innerText = score === 0 ? '-' : score;
+                }
+
+
+                const stars = document.querySelectorAll('.star-icon');
+                stars.forEach((star, idx) => {
+                    const starIndex = idx + 1;
+
+
+                    star.className = 'bi fs-5 star-icon';
+
+                    if (score >= starIndex) {
+
+                        star.classList.add('bi-star-fill', 'text-warning');
+                        star.classList.remove('text-secondary');
+                    } else {
+
+                        star.classList.add('bi-star', 'text-secondary');
+                        star.classList.remove('text-warning', 'bi-star-fill');
+                    }
+                });
+            }
+
+
+
+            function createCustomListPrompt() {
+                const modalEl = document.getElementById('createListInputModal');
+                const inputEl = document.getElementById('newListInput');
+
+
+                inputEl.value = '';
+
+
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+
+                modalEl.addEventListener('shown.bs.modal', () => {
+                    inputEl.focus();
+                }, { once: true });
+            }
+
+
+            async function loadCustomLists(userId = null) {
+                const targetId = userId || currentProfileId;
+                const query = targetId ? `?userId=${targetId}` : '';
+                const isMyProfile = (targetId === null);
+
+                const container = document.getElementById('customListsContainer');
+                const btnContainer = document.getElementById('customListHeaderBtns');
+
+                if (!container) return;
+
+
+                if (isMyProfile && btnContainer) {
+                    if (isListEditMode) {
+
+                        const count = selectedListIds.size;
+                        const btnColor = count > 0 ? 'btn-danger' : 'btn-secondary';
+                        const btnState = count > 0 ? '' : 'disabled';
+
+                        btnContainer.innerHTML = `
+                <button class="btn btn-sm btn-outline-light" onclick="toggleListEditMode(false)">
+                    <i class="bi bi-x-lg"></i> Vazgeç
+                </button>
+                <button class="btn btn-sm ${btnColor} fw-bold" onclick="deleteSelectedLists()" ${btnState}>
+                    <i class="bi bi-trash-fill"></i> Seçilenleri Sil (${count})
+                </button>
+            `;
+                    } else {
+
+                        btnContainer.innerHTML = `
+                <button class="btn btn-sm btn-outline-secondary" onclick="toggleListEditMode(true)" title="Listeleri Yönet">
+                    <i class="bi bi-pencil-square"></i> Düzenle
+                </button>
+                <button class="btn btn-sm btn-outline-warning" onclick="createCustomListPrompt()">
+                    <i class="bi bi-plus-lg"></i> Yeni Liste
+                </button>
+            `;
+                    }
+                } else if (btnContainer) {
+                    btnContainer.innerHTML = '';
+                }
+
+
+                const lists = await fetchWithAuth(`${BASE_API}/library/custom${query}`);
+                container.innerHTML = '';
+
+                if (!lists || lists.length === 0) {
+                    container.innerHTML = '<p class="text-muted small ms-2">Henüz özel liste yok.</p>';
+
+                    if (isListEditMode) toggleListEditMode(false);
+                    return;
+                }
+
+
+                lists.forEach(list => {
+                    const safeName = list.name.replace(/'/g, "\\'");
+
+
+                    let cardClass = 'bg-dark border-info';
+                    let clickAction = `openCustomListDetail(${list.id}, '${safeName}')`;
+                    let selectionIndicator = '';
+
+                    if (isListEditMode) {
+
+                        clickAction = `selectCustomList(${list.id})`;
+
+                        if (selectedListIds.has(list.id)) {
+                            cardClass = 'bg-danger bg-opacity-25 border-danger';
+                            selectionIndicator = '<div class="position-absolute top-0 end-0 m-2 text-danger"><i class="bi bi-check-circle-fill fs-5"></i></div>';
+                        } else {
+                            cardClass = 'bg-dark border-secondary opacity-75';
+                            selectionIndicator = '<div class="position-absolute top-0 end-0 m-2 text-muted"><i class="bi bi-circle fs-5"></i></div>';
+                        }
+                    }
+
+                    container.innerHTML += `
+        <div class="col">
+            <div class="card h-100 position-relative clickable transition ${cardClass}" onclick="${clickAction}">
+                ${selectionIndicator}
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-collection-play fs-1 ${isListEditMode && selectedListIds.has(list.id) ? 'text-white' : 'text-info'} mb-2"></i>
+                    <h6 class="card-title text-truncate mb-1 ${isListEditMode ? 'text-white' : 'text-info'}">${list.name}</h6>
+                    <p class="card-text small ${isListEditMode ? 'text-white-50' : 'text-muted'}">${list.item_count} İçerik</p>
+                </div>
+            </div>
+        </div>`;
+                });
+            }
+
+            async function openAddToListModal(apiId, title, poster, type) {
+                const lists = await fetchWithAuth(`${BASE_API}/library/custom`);
+
+                const checkUrl = `${BASE_API}/library/custom?checkApiId=${encodeURIComponent(apiId)}&checkType=${type}`;
+                const checkLists = await fetchWithAuth(checkUrl);
+
+                const container = document.getElementById('selectListContainer');
+                container.innerHTML = '';
+
+                if (!checkLists || checkLists.length === 0) {
+                    container.innerHTML = '<p class="text-center text-muted p-3 mb-0">Henüz özel listeniz yok.</p>';
+                } else {
+                    checkLists.forEach(l => {
+                        const btn = document.createElement('button');
+
+                        let btnClass = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center ';
+                        let iconHtml = '';
+                        let isDisabled = false;
+
+                        if (l.is_added) {
+
+                            btnClass += 'bg-secondary text-white opacity-75';
+                            iconHtml = '<i class="bi bi-check-circle-fill text-dark fs-5"></i>';
+                            isDisabled = true;
+
+
+
+                            btn.style.pointerEvents = 'none';
+                        } else {
+
+                            btnClass += 'bg-dark text-white border-secondary';
+                            iconHtml = `<small class="text-muted">(${l.item_count})</small>`;
+                        }
+
+                        btn.className = btnClass;
+                        btn.innerHTML = `<span class="fw-bold">${l.name}</span> ${iconHtml}`;
+
+                        if (!isDisabled) {
+                            btn.onclick = () => addContentToCustomList(l.id, apiId, title, poster, type);
+                        }
+
+                        container.appendChild(btn);
+                    });
+                }
+
+                new bootstrap.Modal(document.getElementById('selectListModal')).show();
+            }
+
+            async function addContentToCustomList(listId, apiId, title, poster, type) {
+                try {
+                    const res = await fetchWithAuth(`${BASE_API}/library/custom/add`, {
+                        method: 'POST',
+                        body: JSON.stringify({ listId, api_id: apiId, content_type: type, title, poster_url: poster })
+                    });
+
+
+                    const modalEl = document.getElementById('selectListModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    if (modalInstance) modalInstance.hide();
+
+                    if (res) {
+                        showToast(`"${title}" başarıyla listeye eklendi!`, 'success');
+
+
+
+                        if (document.getElementById('Profile').style.display !== 'none') {
+                            loadCustomLists();
+                        }
+                    }
+                } catch (err) {
+                    showToast('Bu içerik zaten listede olabilir.', 'error');
+                }
+            }
+
+         
+            async function openCustomListDetail(listId, listName) {
+                const isMyProfile = (currentProfileId === null || currentProfileId === myUserId);
+
+
+                let buttonsHtml = '';
+
+                if (isMyProfile) {
+                    if (isListDetailEditMode) {
+
+                        const count = selectedDetailApiIds.size;
+                        const btnColor = count > 0 ? 'btn-danger' : 'btn-secondary';
+                        const btnState = count > 0 ? '' : 'disabled';
+
+                        buttonsHtml = `
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-light" onclick="toggleListDetailEditMode(false, ${listId}, '${listName}')">
+                        <i class="bi bi-x-lg"></i> Vazgeç
+                    </button>
+                    <button class="btn btn-sm ${btnColor} fw-bold" onclick="deleteSelectedDetailItems(${listId}, '${listName}')" ${btnState}>
+                        <i class="bi bi-trash-fill"></i> Seçilenleri Sil (${count})
+                    </button>
+                </div>
+            `;
+                    } else {
+
+
+                        buttonsHtml = `
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="toggleListDetailEditMode(true, ${listId}, '${listName}')" title="İçerikleri Seç ve Sil">
+                        <i class="bi bi-pencil-square"></i> Düzenle
+                    </button>
+                </div>
+            `;
+                    }
+                }
+
+                const headerHtml = `
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <h5 class="modal-title text-info mb-0 text-truncate" style="max-width: 60%;">${listName}</h5>
+            ${buttonsHtml}
+        </div>
+    `;
+
+
+                const modalHeader = document.querySelector('#customListModal .modal-header');
+                modalHeader.innerHTML = headerHtml + '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>';
+
+
+                const container = document.getElementById('customListItemsContainer');
+
+
+                if (!document.getElementById('customListModal').classList.contains('show')) {
+                    container.innerHTML = '<div class="text-center w-100 py-4"><div class="spinner-border text-info"></div></div>';
+                    new bootstrap.Modal(document.getElementById('customListModal')).show();
+                }
+
+
+                const items = await fetchWithAuth(`${BASE_API}/library/custom/${listId}/items`);
+                container.innerHTML = '';
+
+                if (!items || items.length === 0) {
+                    container.innerHTML = '<p class="text-muted text-center w-100 mt-3">Bu liste boş.</p>';
+                    if (isListDetailEditMode) toggleListDetailEditMode(false, listId, listName);
+                    return;
+                }
+
+
+                items.forEach(item => {
+                    let cardClass = 'bg-dark border-secondary';
+                    let clickAction = `openContentDetail('${item.content_type}', '${item.api_id}')`;
+                    let selectionIndicator = '';
+
+                    if (isListDetailEditMode) {
+
+                        clickAction = `selectListDetailItem('${item.api_id}', ${listId}, '${listName}')`;
+
+                        if (selectedDetailApiIds.has(item.api_id)) {
+                            cardClass = 'bg-danger bg-opacity-25 border-danger';
+                            selectionIndicator = '<div class="position-absolute top-0 end-0 m-1 text-danger z-3"><i class="bi bi-check-circle-fill fs-5"></i></div>';
+                        } else {
+                            cardClass = 'bg-dark border-secondary opacity-75';
+                            selectionIndicator = '<div class="position-absolute top-0 end-0 m-1 text-muted z-3"><i class="bi bi-circle fs-5"></i></div>';
+                        }
+                    }
+
+                    container.innerHTML += `
+        <div class="col">
+            <div class="card ${cardClass} h-100 position-relative transition clickable" onclick="${clickAction}">
+                ${selectionIndicator}
+                <div class="position-relative" style="height: 140px; overflow: hidden;">
+                    <img src="${item.poster_url || 'https://placehold.co/200'}" class="card-img-top w-100 h-100" style="object-fit: cover;">
+                </div>
+                <div class="card-body p-2">
+                    <h6 class="text-white text-truncate small mb-0">${item.title}</h6>
+                </div>
+            </div>
+        </div>`;
+                });
+            }
+
+            async function removeItemFromCustomList(listId, itemId, btnElement) {
+                if (!await showCustomConfirm("Bu içeriği listeden çıkarmak istediğinize emin misiniz?")) return;
+
+                try {
+                    const res = await fetchWithAuth(`${BASE_API}/library/custom/${listId}/item/${itemId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (res) {
+                        showToast('İçerik listeden çıkarıldı.', 'success');
+
+                        const col = btnElement.closest('.col');
+                        col.style.transition = 'all 0.3s';
+                        col.style.opacity = '0';
+                        setTimeout(() => col.remove(), 300);
+
+
+                        loadCustomLists();
+                    }
+                } catch (err) {
+                    showToast('Hata oluştu.', 'error');
+                }
+            }
+
+            async function loadProfileActivities(targetUserId) {
+                const container = document.getElementById('profileActivities');
+                container.innerHTML = '<div class="spinner-border spinner-border-sm text-warning"></div>';
+
+                try {
+
+                    const acts = await fetchWithAuth(`${BASE_API}/users/feed?userId=${targetUserId}&limit=5`);
+
+                    container.innerHTML = '';
+
+                    if (!acts || acts.length === 0) {
+                        container.innerHTML = '<p class="text-muted small fst-italic">Henüz bir etkileşim yok.</p>';
+                        return;
+                    }
+
+                    acts.forEach(act => {
+
+                        const html = createActivityCard(act);
+                        container.insertAdjacentHTML('beforeend', html);
+                    });
+
+
+                } catch (err) {
+                    console.error(err);
+                    container.innerHTML = '<p class="text-danger text-center w-100">Hata.</p>';
+                }
+            }
+
+            async function deleteReview() {
+
+                const btnGroup = document.getElementById('statusBtnGroup');
+                const libId = btnGroup ? btnGroup.getAttribute('data-lib-id') : null;
+
+                if (!libId || libId === 'null') {
+                    return showToast("Silinecek bir kayıt bulunamadı.", "warning");
+                }
+
+                if (!await showCustomConfirm("Yorumunuzu ve puanınızı kalıcı olarak silmek istiyor musunuz?")) return; {
+                    return;
+                }
+
+                try {
+
+                    const res = await fetchWithAuth(`${BASE_API}/library/review/${libId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (res) {
+                        showToast("Yorumunuz ve puanınız silindi.", "success");
+
+                        openContentDetail(currentContentType, currentContentId);
+
+
+                        loadLibrary();
+
+
+
+                        if (document.getElementById('Activity').style.display !== 'none') {
+                            loadActivityFeed();
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast("Silme işlemi başarısız. Lütfen tekrar deneyin.", "warning");
+                }
+            }
+
+            function togglePasswordVisibility(inputId, iconBtn) {
+                const input = document.getElementById(inputId);
+                const icon = iconBtn.querySelector('i');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                }
+            }
+
+            function timeAgo(dateString) {
+
+                if (!dateString) return "Tarih yok";
+
+
+                const date = new Date(dateString);
+
+
+                if (isNaN(date.getTime())) return "";
+
+
+                const now = new Date();
+                const seconds = Math.floor((now - date) / 1000);
+
+
+                if (seconds < 0) return "az önce";
+
+
+
+
+                let interval = Math.floor(seconds / 31536000);
+                if (interval >= 1) return interval + " yıl önce";
+
+
+                interval = Math.floor(seconds / 2592000);
+                if (interval >= 1) return interval + " ay önce";
+
+
+                interval = Math.floor(seconds / 604800);
+                if (interval >= 1) return interval + " hafta önce";
+
+
+                interval = Math.floor(seconds / 86400);
+                if (interval >= 1) return interval + " gün önce";
+
+
+                interval = Math.floor(seconds / 3600);
+                if (interval >= 1) return interval + " saat önce";
+
+
+                interval = Math.floor(seconds / 60);
+                if (interval >= 1) return interval + " dakika önce";
+
+
+                return "az önce";
+            }
+
+            function slideRail(elementId, direction) {
+                const container = document.getElementById(elementId);
+                if (!container) return;
+
+                const scrollAmount = container.clientWidth;
+
+                if (direction === 1) {
+                    container.scrollLeft += scrollAmount;
+                } else {
+                    container.scrollLeft -= scrollAmount;
+                }
+
+                setTimeout(() => updateScrollButtons(elementId), 350);
+            }
+
+            function updateScrollButtons(elementId) {
+                const container = document.getElementById(elementId);
+                if (!container) return;
+
+
+                const wrapper = container.parentElement;
+                const leftBtn = wrapper.querySelector('.scroll-left');
+                const rightBtn = wrapper.querySelector('.scroll-right');
+
+                if (container.scrollLeft <= 10) {
+                    leftBtn.classList.add('hidden-btn');
+                } else {
+                    leftBtn.classList.remove('hidden-btn');
+                }
+
+                if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 10) {
+                    rightBtn.classList.add('hidden-btn');
+                } else {
+                    rightBtn.classList.remove('hidden-btn');
+                }
+            }
+
+            function openUserSearchModal() {
+
+                document.getElementById('userSearchInput').value = '';
+                document.getElementById('userSearchResults').innerHTML = '<p class="text-center text-muted small mt-2">Aramak için yazmaya başlayın...</p>';
+                new bootstrap.Modal(document.getElementById('userSearchModal')).show();
+            }
+
+            async function searchUsersDirectly() {
+                const q = document.getElementById('userSearchInput').value.trim();
+                const container = document.getElementById('userSearchResults');
+
+                if (q.length < 1) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                const data = await fetchWithAuth(`${BASE_API}/content/search/unified?q=${q}&type=user`);
+                container.innerHTML = '';
+
+                if (!data || !data.users || data.users.length === 0) {
+                    container.innerHTML = '<p class="text-center text-muted small">Kullanıcı bulunamadı.</p>';
+                    return;
+                }
+
+                data.users.forEach(u => {
+
+
+
+
+                    const isFollowing = u.is_following;
+                    const btnTxt = isFollowing ? "Takipte" : "Takip Et";
+                    const btnCls = isFollowing ? "btn-secondary" : "btn-warning";
+                    const act = isFollowing ? 'unfollow' : 'follow';
+                    const avatar = u.avatar_url || 'https://placehold.co/50';
+
+                    container.innerHTML += `
+            <div class="list-group-item bg-dark border-secondary d-flex align-items-center justify-content-between px-0 py-2">
+                <div class="d-flex align-items-center gap-3 clickable" onclick="visitUserProfile(${u.id})">
+                    <img src="${avatar}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                    <span class="text-white fw-bold">${u.username}</span>
+                </div>
+                
+                <button class="btn btn-sm ${btnCls} fw-bold" 
+                        onclick="toggleFollow(${u.id}, '${act}', false, this)" 
+                        style="min-width: 110px;">
+                    ${btnTxt}
+                </button>
+            </div>
+        `;
+                });
+            }
+
+            const userSearchModal = document.getElementById('userSearchModal');
+
+            userSearchModal.addEventListener('shown.bs.modal', () => {
+                document.getElementById('userSearchInput').focus();
+            });
+
+            function showToast(message, type = 'success') {
+                const toastEl = document.getElementById('liveToast');
+                const msgEl = document.getElementById('toastMessage');
+                const iconEl = document.getElementById('toastIcon');
+                const toastDiv = toastEl;
+
+                msgEl.innerText = message;
+
+
+                if (type === 'success') {
+                    iconEl.className = 'bi bi-check-circle-fill text-success me-2 fs-5';
+                    toastDiv.className = 'toast align-items-center text-white bg-dark border-success';
+                } else if (type === 'error') {
+                    iconEl.className = 'bi bi-x-circle-fill text-danger me-2 fs-5';
+                    toastDiv.className = 'toast align-items-center text-white bg-dark border-danger';
+                } else {
+                    iconEl.className = 'bi bi-info-circle-fill text-warning me-2 fs-5';
+                    toastDiv.className = 'toast align-items-center text-white bg-dark border-warning';
+                }
+
+                const toast = new bootstrap.Toast(toastEl, { delay: 2000 });
+                toast.show();
+            }
+
+            function expandReviewText(btnElement) {
+
+                const textP = btnElement.previousElementSibling;
+
+                if (textP) {
+
+                    textP.classList.remove('text-line-clamp');
+
+
+
+                    textP.style.display = 'block';
+                    textP.style.webkitLineClamp = 'unset';
+                    textP.style.overflow = 'visible';
+                    textP.style.maxHeight = 'none';
+                    textP.style.height = 'auto';
+                    textP.style.whiteSpace = 'normal';
+
+
+                    btnElement.remove();
+                } else {
+                    console.error("Hata: Yazı elementi bulunamadı. HTML yapısını kontrol et.");
+                }
+            }
+
+            function clearSearch() {
+
+                document.getElementById('searchInput').value = '';
+
+
+                document.getElementById('searchResultsArea').style.display = 'none';
+
+
+                document.getElementById('popularShowcaseArea').style.display = 'block';
+
+
+                updateScrollButtons('popularMoviesRail');
+                updateScrollButtons('popularBooksRail');
+            }
+
+            let currentActivityId = null;
+
+            async function openCommentsModal(activityId, title) {
+                currentActivityId = activityId;
+                const modalEl = document.getElementById('commentsModal');
+
+
+
+                let modalInstance = bootstrap.Modal.getInstance(modalEl);
+
+                if (!modalInstance) {
+
+                    modalInstance = new bootstrap.Modal(modalEl);
+                }
+
+
+                if (!modalEl.classList.contains('show')) {
+
+                    document.getElementById('commModalTitle').innerText = "Yorumlar";
+                    document.getElementById('commModalSubTitle').innerText = title;
+                    document.getElementById('commListArea').innerHTML = '<div class="text-center py-4"><div class="spinner-border text-warning"></div></div>';
+                    document.getElementById('commMyReviewInput').value = '';
+
+                    modalInstance.show();
+                }
+
+
+                document.getElementById('commMyRatingBadge').style.display = 'none';
+
+
+
+                try {
+                    const comments = await fetchWithAuth(`${BASE_API}/users/activity/${activityId}/comments`);
+
+                    const container = document.getElementById('commListArea');
+                    container.innerHTML = '';
+
+                    if (!comments || comments.length === 0) {
+                        container.innerHTML = '<div class="text-center text-muted py-5 opacity-50"><i class="bi bi-chat-quote fs-1"></i><p class="mt-2">Bu gönderiye henüz yorum yapılmamış.</p></div>';
+                    } else {
+                        comments.forEach(c => {
+                            const avatar = c.avatar_url || 'https://placehold.co/50';
+
+                            container.innerHTML += `
+                    <div class="d-flex gap-3 border-bottom border-secondary border-opacity-25 pb-2 mb-2">
+                        <img src="${avatar}" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+                        <div class="w-100">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <strong class="text-white" style="font-size: 0.85rem;">${c.username}</strong>
+                                <small class="text-muted" style="font-size: 0.65rem;">${timeAgo(c.created_at)}</small>
+                            </div>
+                            <p class="text-light small mb-0 mt-1 break-word" style="line-height: 1.4;">${c.comment_text}</p>
+                        </div>
+                    </div>
+                `;
+                        });
+
+
+
+                    }
+                } catch (err) {
+                    console.error(err);
+                    const container = document.getElementById('commListArea');
+                    if (container) container.innerHTML = '<p class="text-danger text-center">Yorumlar yüklenemedi.</p>';
+                }
+            }
+
+            async function postCommentFromModal() {
+                const text = document.getElementById('commMyReviewInput').value.trim();
+
+                if (!text) return showToast("Boş yorum gönderilemez.", "warning");
+
+                try {
+                    const res = await fetchWithAuth(`${BASE_API}/users/activity/comment`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            activityId: currentActivityId,
+                            text: text
+                        })
+                    });
+
+                    if (res) {
+                        showToast('Yorum gönderildi!', 'success');
+
+
+                        const currentTitle = document.getElementById('commModalSubTitle').innerText;
+                        openCommentsModal(currentActivityId, currentTitle);
+
+
+                        setTimeout(() => {
+
+
+                            if (document.getElementById('Activity').style.display !== 'none') {
+                                loadActivityFeed(true);
+                            }
+
+
+                            if (document.getElementById('Profile').style.display !== 'none') {
+
+                                const targetId = currentProfileId || myUserId;
+                                if (targetId) {
+                                    loadProfileActivities(targetId);
+                                }
+                            }
+
+                        }, 500);
+
+                    }
+                } catch (e) {
+                    showToast("Yorum gönderilirken bir hata oluştu.", "error");
+                }
+            }
+
+            function renderSearchCard(container, c) {
+                const title = (c.title || 'Adsız').replace(/'/g, "\\'");
+                const poster = c.poster || 'https://placehold.co/300x450';
+                const yearInfo = c.year || c.release_date?.split('-')[0] || c.publishedDate?.split('-')[0] || '-';
+                const ratingBadge = c.rating ? Number(c.rating).toFixed(1) : (c.vote_average ? Number(c.vote_average).toFixed(1) : '-');
+
+                container.innerHTML += `
+    <div class="col">
+        <div class="card bg-dark text-white border-secondary h-100 shadow-sm" style="min-height: 380px;">
+            <div class="position-relative clickable" style="height: 240px; overflow: hidden;" 
+                 onclick="openContentDetail('${c.type}', '${encodeURIComponent(c.id)}')">
+                <img src="${poster}" class="w-100 h-100" style="object-fit: cover;">
+                <span class="position-absolute top-0 end-0 bg-warning text-dark px-2 fw-bold small shadow-sm">${ratingBadge}</span>
+            </div>
+            <div class="card-body p-3 d-flex flex-column">
+                <h6 class="card-title text-white fw-bold text-truncate mb-2" title="${c.title}">${c.title}</h6>
+                <div class="d-flex gap-2 mb-3 w-100">
+                    <span class="text-warning border border-warning rounded flex-fill d-flex align-items-center justify-content-center small py-1" style="background: rgba(255,255,255,0.1)">${yearInfo}</span>
+                    <span class="text-warning border border-warning rounded flex-fill d-flex align-items-center justify-content-center small py-1" style="background: rgba(255,255,255,0.1)">${c.type === 'movie' ? 'Film' : 'Kitap'}</span>
+                </div>
+                <button class="btn btn-sm btn-outline-primary w-100 fw-bold mt-auto" 
+                        onclick="openAddToListModal('${c.id}', '${title}', '${poster}', '${c.type}')">
+                    <i class="bi bi-list-plus"></i> Listeye Ekle
+                </button>
+            </div>
+        </div>
+    </div>`;
+            }
+
+
+            function filterList(list, year, minRating) {
+                if (!list) return [];
+
+                return list.filter(item => {
+
+                    if (year && year !== "") {
+
+                        const dateStr = item.release_date || item.first_air_date || item.publishedDate || item.year || "";
+
+
+                        const itemYearStr = dateStr.toString().substring(0, 4);
+                        const itemYear = parseInt(itemYearStr);
+
+                        if (isNaN(itemYear)) return false;
+
+                        const targetYear = parseInt(year);
+
+                        if (year === '2020') {
+
+                            if (itemYear < 2020) return false;
+                        }
+                        else if (year === '2000') {
+
+                            if (itemYear > 2000) return false;
+                        }
+                        else {
+
+                            if (itemYear !== targetYear) return false;
+                        }
+                    }
+
+
+                    if (minRating && minRating !== "") {
+                        const rating = parseFloat(item.vote_average || item.averageRating || item.rating || 0);
+                        if (rating < parseFloat(minRating)) return false;
+                    }
+
+                    return true;
+                });
+            }
+
+
+            document.getElementById('newListSaveBtn').addEventListener('click', async () => {
+                const inputEl = document.getElementById('newListInput');
+                const modalEl = document.getElementById('createListInputModal');
+                const name = inputEl.value.trim();
+
+
+                if (!name) {
+                    showToast("Lütfen bir liste adı girin.", "warning");
+                    return;
+                }
+
+                try {
+
+                    const res = await fetchWithAuth(`${BASE_API}/library/custom`, {
+                        method: 'POST',
+                        body: JSON.stringify({ name })
+                    });
+
+                    if (res) {
+                        showToast('Liste başarıyla oluşturuldu!', 'success');
+
+
+                        loadCustomLists();
+
+
+                        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                        modalInstance.hide();
+                    }
+                } catch (error) {
+                    showToast("Bir hata oluştu.", "error");
+                }
+            });
+
+
+            document.getElementById('newListInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('newListSaveBtn').click();
+                }
+            });
+            function DEBUG_FIX() {
+
+                document.getElementById('dashboard').style.display = 'block';
+
+
+                const activityTab = document.getElementById('Activity');
+                if (activityTab) activityTab.style.display = 'block';
+
+
+                const feedContainer = document.getElementById('feedContainer');
+                if (feedContainer) feedContainer.style.display = 'flex';
+
+
+                loadActivityFeed(true);
+                console.log("DEBUG: Akış zorla yüklendi ve görünürlük ayarlandı.");
+            }
+  
+            async function updateContentStatus(newStatus) {
+                const btnGroup = document.getElementById('statusBtnGroup');
+                if (!btnGroup) return;
+
+
+                const libId = btnGroup.getAttribute('data-lib-id');
+
+
+
+
+                const watchedBtn = btnGroup.children[0].children[0];
+                const plannedBtn = btnGroup.children[0].children[1];
+
+                let currentStatus = null;
+                if (watchedBtn.classList.contains('btn-success')) currentStatus = 'watched';
+                else if (plannedBtn.classList.contains('btn-primary')) currentStatus = 'planned';
+
+                try {
+
+                    if (libId && libId !== 'null' && currentStatus === newStatus) {
+                        if (!await showCustomConfirm("Bu içeriği kütüphanenizden tamamen kaldırmak istiyor musunuz?")) return;
+
+                        const res = await fetchWithAuth(`${BASE_API}/library/${libId}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (res) {
+                            showToast("İçerik kütüphaneden kaldırıldı.", "success");
+
+                            openContentDetail(currentContentType, currentContentId);
+                            loadLibrary();
+                        }
+                        return;
+                    }
+
+
+                    if (libId && libId !== 'null') {
+                        const res = await fetchWithAuth(`${BASE_API}/library/${libId}`, {
+                            method: 'PUT',
+                            body: JSON.stringify({ status: newStatus })
+                        });
+                        if (res) {
+                            showToast("Durum güncellendi.", "success");
+                            openContentDetail(currentContentType, currentContentId);
+                            loadLibrary();
+                        }
+                        return;
+                    }
+
+
+                    const title = document.getElementById('detailHeaderTitle').innerText;
+                    const poster = document.getElementById('detailPoster').src;
+
+                    const res = await fetchWithAuth(`${BASE_API}/library/add`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            api_id: currentContentId,
+                            content_type: currentContentType,
+                            title: title,
+                            poster_url: poster,
+                            status: newStatus
+                        })
+                    });
+
+                    if (res) {
+                        showToast("Kütüphaneye eklendi!", "success");
+
+                        openContentDetail(currentContentType, currentContentId);
+                        loadLibrary();
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    showToast("İşlem başarısız.", "error");
+                }
+            }
+
+            async function deleteCustomList(listId, event = null) {
+
+                if (event) {
+                    event.stopPropagation();
+                }
+
+
+                if (!await showCustomConfirm("Bu listeyi ve içindeki tüm içerikleri silmek istediğinize emin misiniz?")) return;
+
+                try {
+                    const res = await fetchWithAuth(`${BASE_API}/library/custom/${listId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (res) {
+                        showToast('Liste başarıyla silindi.', 'success');
+
+
+                        const modalEl = document.getElementById('customListModal');
+                        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                        if (modalInstance) modalInstance.hide();
+
+
+                        loadCustomLists();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast('Silme işlemi başarısız.', 'error');
+                }
+            }
+
+
+            function toggleListEditMode(active) {
+                isListEditMode = active;
+                selectedListIds.clear();
+                loadCustomLists();
+            }
+
+
+            function selectCustomList(listId) {
+                if (selectedListIds.has(listId)) {
+                    selectedListIds.delete(listId);
+                } else {
+                    selectedListIds.add(listId);
+                }
+                loadCustomLists();
+            }
+
+
+            async function deleteSelectedLists() {
+                if (selectedListIds.size === 0) return;
+
+                if (!await showCustomConfirm(`${selectedListIds.size} adet listeyi ve içindekileri kalıcı olarak silmek istiyor musunuz?`)) return;
+
+                let successCount = 0;
+
+
+                for (const id of selectedListIds) {
+                    try {
+                        await fetchWithAuth(`${BASE_API}/library/custom/${id}`, { method: 'DELETE' });
+                        successCount++;
+                    } catch (e) { console.error(e); }
+                }
+
+                if (successCount > 0) {
+                    showToast(`${successCount} liste silindi.`, 'success');
+                    toggleListEditMode(false);
+                } else {
+                    showToast('Silme işlemi başarısız.', 'error');
+                }
+            }
+
+
+            function toggleListDetailEditMode(active, listId, listName) {
+                isListDetailEditMode = active;
+                selectedDetailApiIds.clear();
+                openCustomListDetail(listId, listName);
+            }
+
+            function selectListDetailItem(apiId, listId, listName) {
+                if (selectedDetailApiIds.has(apiId)) {
+                    selectedDetailApiIds.delete(apiId);
+                } else {
+                    selectedDetailApiIds.add(apiId);
+                }
+                openCustomListDetail(listId, listName);
+            }
+
+            async function deleteSelectedDetailItems(listId, listName) {
+                if (selectedDetailApiIds.size === 0) return;
+
+                if (!await showCustomConfirm(`Seçilen ${selectedDetailApiIds.size} içeriği listeden çıkarmak istiyor musunuz?`)) return;
+
+                let successCount = 0;
+
+
+                for (const apiId of selectedDetailApiIds) {
+                    try {
+                        await fetchWithAuth(`${BASE_API}/library/custom/${listId}/item/${apiId}`, { method: 'DELETE' });
+                        successCount++;
+                    } catch (e) { console.error(e); }
+                }
+
+                if (successCount > 0) {
+                    showToast(`${successCount} içerik listeden çıkarıldı.`, 'success');
+
+                    loadCustomLists();
+
+                    toggleListDetailEditMode(false, listId, listName);
+                } else {
+                    showToast('İşlem başarısız.', 'error');
+                }
+            }
+
+
+            async function checkNotifications() {
+                if (!getToken()) return;
+
+                try {
+                    const res = await fetchWithAuth(`${BASE_API}/users/notifications`);
+                    if (!res) return;
+
+                    const { notifications, unreadCount } = res;
+                    const badge = document.getElementById('notifBadge');
+                    const list = document.getElementById('notifList');
+
+
+                    if (unreadCount > 0) {
+                        badge.innerText = unreadCount;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+
+
+                    list.innerHTML = '';
+                    if (notifications.length === 0) {
+                        list.innerHTML = '<li><span class="dropdown-item-text text-muted small text-center d-block">Bildirim yok.</span></li>';
+                    } else {
+                        notifications.forEach(n => {
+                            const avatar = n.actor_avatar || 'https://placehold.co/40';
+                            const bgClass = n.is_read ? '' : 'bg-secondary bg-opacity-25';
+
+                            list.innerHTML += `
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 p-2 ${bgClass}" href="#" onclick="openActivityFromNotif(${n.activity_id})">
+                        <img src="${avatar}" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                        <div style="line-height: 1.2;">
+                            <small class="text-white fw-bold d-block">${n.actor_name}</small>
+                            <small class="text-muted" style="font-size: 0.75rem;">${n.message}</small>
+                            <small class="text-secondary d-block mt-1" style="font-size: 0.65rem;">${timeAgo(n.created_at)}</small>
+                        </div>
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider border-secondary my-0"></li>`;
+                        });
+                    }
+
+                } catch (e) { console.error("Bildirim hatası:", e); }
+            }
+
+
+            async function markNotificationsAsRead() {
+                const badge = document.getElementById('notifBadge');
+                if (badge.style.display === 'none') return;
+
+                try {
+                    await fetchWithAuth(`${BASE_API}/users/notifications/read`, { method: 'PUT' });
+                    badge.style.display = 'none';
+                } catch (e) { console.error(e); }
+            }
+
+
+            async function openActivityFromNotif(activityId) {
+
+
+
+
+
+
+
+                openCommentsModal(activityId, 'Gönderi Detayı');
+            }
+
+        </script>
+
+</body>
+
+</html>
