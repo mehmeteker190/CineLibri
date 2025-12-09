@@ -131,7 +131,6 @@ exports.getActivityFeed = async (req, res) => {
                 (SELECT COUNT(*)::int FROM activity_likes WHERE activity_id = a.id) as like_count,
                 EXISTS(SELECT 1 FROM activity_likes WHERE activity_id = a.id AND user_id = $1) as is_liked,
                 
-                -- HATA BURADAYDI: "comment_count" yerine tırnak içinde "commentCount" yazıyoruz:
                 (SELECT COUNT(*)::int FROM activity_comments WHERE activity_id = a.id) as "commentCount"
                 
             FROM activities a

@@ -42,7 +42,7 @@ exports.login = async (req, res) => {
         const isValid = await bcrypt.compare(password, user.password_hash);
         if (!isValid) return res.status(401).json({ message: 'E-posta veya şifre hatalı.' });
 
-        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.status(200).json({
             message: 'Giriş başarılı.',
             token,
